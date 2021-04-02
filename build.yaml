@@ -100,6 +100,7 @@ Pester:
   #  - Templates
 
 DscTest:
+  MainGitBranch: main
   ExcludeTag:
     # - "Common Tests - New Error-Level Script Analyzer Rules"
     # - "Common Tests - Validate Localization"
