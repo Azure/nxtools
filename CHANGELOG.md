@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Supporting Enums and Classes for File System permissions.
     - In order to make interpretation, Comparison, and manipulation of File system permissions easier,
-      the module implements a few classes and enum to make that work. 
+      the module implements a few classes and enum to make that work.
 
 ### Fixed
 
