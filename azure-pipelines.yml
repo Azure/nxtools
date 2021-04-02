@@ -53,7 +53,7 @@ stages:
       - job: Test_HQRM
         displayName: 'HQRM'
         pool:
-          vmImage: 'windows-2019'
+          vmImage: 'ubuntu 16.04'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -80,7 +80,7 @@ stages:
       - job: Test_Unit
         displayName: 'Unit'
         pool:
-          vmImage: 'windows-2019'
+          vmImage: 'ubuntu 16.04'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -113,7 +113,7 @@ stages:
       - job: Test_Integration
         displayName: 'Integration'
         pool:
-          vmImage: 'windows-2019'
+          vmImage: 'ubuntu 16.04'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -223,4 +223,3 @@ stages:
               pwsh: true
             env:
               GitHubToken: $(GitHubToken)
-

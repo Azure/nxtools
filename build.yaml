@@ -8,12 +8,11 @@
 # OutputDirectory: ../output/Sampler
 CopyPaths:
   - en-US
-#  - DSCResources
-  # - Modules
+  # - DSCResources
 Encoding: UTF8
 # Suffix to add to Root module PSM1 after merge (here, the Set-Alias exporting IB tasks)
 # suffix: suffix.ps1
-# prefix: prefix.ps1
+prefix: prefix.ps1
 VersionedOutputDirectory: true
 
 ####################################################
@@ -21,15 +20,16 @@ VersionedOutputDirectory: true
 ####################################################
 
 NestedModule:
-#  HelperSubmodule: # This is the first submodule to build into the output
-#    Path: ./*/Modules/HelperSubmodule/HelperSubmodule.psd1
-#    #  is trimmed (remove metadata & Prerelease tag) and OutputDirectory expanded (the only one)
-#    OutputDirectory: ///Modules/HelperSubmodule
-#    VersionedOutputDirectory: false
-#    AddToManifest: false
-#    SemVer: 
-#    # suffix:
-#    # prefix:
+  PSNativeCmdDevKit:
+    CopyOnly: true
+    Path: ./output/RequiredModules/PSNativeCmdDevKit
+    AddToManifest: false
+    Exclude: PSGetModuleInfo.xml
+  DscResource.Common:
+    CopyOnly: true
+    Path: ./output/RequiredModules/DscResource.Common
+    AddToManifest: false
+    Exclude: PSGetModuleInfo.xml
 
 ####################################################
 #       Sampler Pipeline Configuration             #
@@ -39,6 +39,7 @@ BuildWorkflow:
   '.': # "." is the default Invoke-Build workflow. It is called when no -Tasks is specified to the build.ps1
     - build
     - test
+    - hqrmtest
 
   build:
     - Clean
@@ -82,21 +83,35 @@ Pester:
   # only run tests in certain folders, or run specific test files, or can be use to
   # specify the order tests are run.
   Script:
+    - tests/Unit
   # - tests/QA/module.tests.ps1
   # - tests/QA
-  # - tests/Unit
   # - tests/Integration
   ExcludeTag:
     - helpQuality
     - FunctionalQuality
     - TestQuality
   Tag:
-  CodeCoverageThreshold: 85 # Set to 0 to bypass
+  CodeCoverageThreshold: 0 # Set to 0 to bypass
   # CodeCoverageOutputFile: JaCoCo_.xml
   # CodeCoverageOutputFileEncoding: ascii
   # CodeCoverageMergedOutputFile: JaCoCo_Merged.xml
   #  - Modules/DscResource.Common
   #  - Templates
+
+DscTest:
+  ExcludeTag:
+    # - "Common Tests - New Error-Level Script Analyzer Rules"
+    # - "Common Tests - Validate Localization"
+    # - "Common Tests - Validate Example Files To Be Published"
+    # - "Common Tests - Validate Example Files"
+  Tag:
+  ExcludeSourceFile:
+    - output
+    - Modules
+  ExcludeModuleFile:
+    - Templates
+    - Modules
 
 # Import ModuleBuilder tasks from a specific PowerShell module using the build
 # task's alias. Wildcard * can be used to specify all tasks that has a similar
@@ -120,7 +135,3 @@ TaskHeader: |
   Write-Build DarkGray "  $Path"
   Write-Build DarkGray "  $($Task.InvocationInfo.ScriptName):$($Task.InvocationInfo.ScriptLineNumber)"
   ""
-
-
-
-

@@ -18,7 +18,7 @@ function Convert-CharTonxFileSystemUserClass
                 'g' { [nxFileSystemUserClass]'Group'  }
                 'o' { [nxFileSystemUserClass]'Others' }
                 'a' { [nxFileSystemUserClass]'User, Group, Others' }
-                Default { throw "Unexpected char '$CharItem'" }
+                default { throw "Unexpected char '$CharItem'" }
             }
         }
     }

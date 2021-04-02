@@ -23,7 +23,7 @@ function Get-LinuxStandardBaseRelease
             {
                 ''                 { }
                 'No\sLSB\smodules' { Write-Verbose $_ }
-                Default            { Write-Error "$_" }
+                default            { Write-Error "$_" }
             }
         }
 

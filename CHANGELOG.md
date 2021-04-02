@@ -7,25 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- For new features.
+- Initial addition of commandd:
+    - `Get-nxFileSystemChildItem`: Similar to Get-ChildItem for the FileSystem provider but on Linux, this will use the `ls` command.
+    - `Get-nxLinuxStandardBaseRelease`: A quick wrap of `lsb_release -a` command (this `lsb_release` must be present on the system).
+    - `Get-nxOSDistributionInfo`: Parsing information found in `/etc/*-release`.
+    - `Get-nxKernelInfo`: A simple wrapper around `uname -a`.
+    - `Compare-nxFileSystemPermission`: An easy way to compare two sets of unix file system permissions.  
+        You can use a Symbolic notation (`rwxrwxrwx`), or the numericla permission (`777` or `0777`).
 
-### Changed
-
-- For changes in existing functionality.
-
-### Deprecated
-
-- For soon-to-be removed features.
-
-### Removed
-
-- For now removed features.
-
-### Fixed
-
-- For any bug fix.
-
-### Security
-
-- In case of vulnerabilities.
-
+- Supporting Enums and Classes for File System permissions.
+    - In order to make interpretation, Comparison, and manipulation of File system permissions easier,
+      the module implements a few classes and enum to make that work. 

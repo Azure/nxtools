@@ -23,7 +23,7 @@ function Get-FileSystemChildItem
         {
             'Recurse'   { $lsParams += '--recursive' }
             'Directory' { $lsParams += '-d' }
-            Default     { Write-Debug -Message "Parameter '$_' not added automatically." }
+            default     { Write-Debug -Message "Parameter '$_' not added automatically." }
         }
     }
 

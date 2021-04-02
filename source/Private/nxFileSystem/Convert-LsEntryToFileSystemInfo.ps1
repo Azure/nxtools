@@ -15,7 +15,7 @@ function Convert-LsEntryToFileSystemInfo
         $ErrorHandler = {
             switch -Regex ($_)
             {
-                Default { Write-Error "$_" }
+                default { Write-Error "$_" }
             }
         }
     )

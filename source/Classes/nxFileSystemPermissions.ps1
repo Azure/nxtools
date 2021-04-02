@@ -31,7 +31,7 @@ class nxFileSystemPermissions
         {
             $this.setNxFileSystemPermissionFromSymbolicTriadNotation($Permissions)
         }
-        elseif(-not ($Permissions -split '\s+').Where{$_ -cnotmatch [nxFileSystemPermissions]::SymbolicOperationParser})
+        elseif (-not ($Permissions -split '\s+').Where{$_ -cnotmatch [nxFileSystemPermissions]::SymbolicOperationParser})
         {
             # All items of the space delimited Symbolic operations have been checked.
             $this.DoSymbolicChmodOperation($Permissions)
@@ -94,7 +94,7 @@ class nxFileSystemPermissions
                 $this.RemoveMode($userClass, $accessRights, $specialMode)
             }
 
-            Default
+            default
             {
                 throw "Operator not recognised '$operator'."
             }
@@ -200,25 +200,24 @@ class nxFileSystemPermissions
 
     [string] ToString()
     {
-
         Write-Verbose -Message "$($this.OwnerPermission)"
         Write-Verbose -Message "$(@($this.OthersPermission, $this.SpecialModeFlags) -join '|')"
 
         $SymbolNotation = [PSCustomObject]@{
-                    UserClass = [nxFileSystemUserClass]::User
-                    AccessRight = $this.OwnerPermission
-                    UseDashWhenAbsent = $true
-                },
-                [PSCustomObject]@{
-                    UserClass = [nxFileSystemUserClass]::Group
-                    AccessRight = $this.GroupPermission
-                    UseDashWhenAbsent = $true
-                },
-                [PSCustomObject]@{
-                    UserClass = [nxFileSystemUserClass]::User
-                    AccessRight = $this.OthersPermission
-                    UseDashWhenAbsent = $true
-                } | Convert-FileSystemAccessRightToSymbol
+            UserClass         = [nxFileSystemUserClass]::User
+            AccessRight       = $this.OwnerPermission
+            UseDashWhenAbsent = $true
+        },
+        [PSCustomObject]@{
+            UserClass         = [nxFileSystemUserClass]::Group
+            AccessRight       = $this.GroupPermission
+            UseDashWhenAbsent = $true
+        },
+        [PSCustomObject]@{
+            UserClass         = [nxFileSystemUserClass]::User
+            AccessRight       = $this.OthersPermission
+            UseDashWhenAbsent = $true
+        } | Convert-FileSystemAccessRightToSymbol
 
         Write-Verbose -Message "SymbolNotation: $SymbolNotation"
         return ($SymbolNotation -join '')

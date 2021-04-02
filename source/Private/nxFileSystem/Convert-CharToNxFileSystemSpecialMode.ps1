@@ -47,7 +47,7 @@ function Convert-CharToNxFileSystemSpecialMode
                     }
                 }
 
-                Default {
+                default {
                     Write-Debug -Message "Nothing to return for char '$charItem'."
                 }
             }
