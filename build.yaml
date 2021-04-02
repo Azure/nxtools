@@ -123,7 +123,7 @@ ModuleBuildTasks:
     - '*.build.Sampler.ib.tasks'
   Sampler.GitHubTasks:
     - '*.ib.tasks'
-  DscResource.DocGenerato:
+  DscResource.DocGenerator:
     - 'Task.*'
 
 
