@@ -24,3 +24,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed the main branch to release from to be `main` instead of `master`.
 - Removing the 'Configure winrm' tasks (as we're only running on linux).
 - Added the DocGenerator tasks to build.yaml.
+- Fixed casing to `nxtools` because I can't change PSGallery package casing.

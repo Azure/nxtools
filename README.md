@@ -1,13 +1,13 @@
 <img align="right" width='128px' src="./source/assets/pstux.png" alt="Tux loves PS">
 
-# nxTools [![Azure DevOps builds](https://img.shields.io/azure-devops/build/Synedgy/nxTools/10)](https://synedgy.visualstudio.com/nxTools/_build?definitionId=10&_a=summary)
+# nxtools [![Azure DevOps builds](https://img.shields.io/azure-devops/build/Synedgy/nxtools/10)](https://synedgy.visualstudio.com/nxtools/_build?definitionId=10&_a=summary)
 
 
-[![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/nxTools?label=nxTools%20Preview)](https://www.powershellgallery.com/packages/nxTools/)
-[![PowerShell Gallery](https://img.shields.io/powershellgallery/v/nxTools?label=nxTools)](https://www.powershellgallery.com/packages/nxTools/)
-[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/SynEdgy/nxTools/1)](https://synedgy.visualstudio.com/nxTools/_test/analytics?definitionId=10&contextType=build)
-![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/Synedgy/nxTools/10)
-![PowerShell Gallery](https://img.shields.io/powershellgallery/p/nxTools)
+[![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/nxtools?label=nxtools%20Preview)](https://www.powershellgallery.com/packages/nxtools/)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/v/nxtools?label=nxtools)](https://www.powershellgallery.com/packages/nxtools/)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/SynEdgy/nxtools/1)](https://synedgy.visualstudio.com/nxtools/_test/analytics?definitionId=10&contextType=build)
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/Synedgy/nxtools/10)
+![PowerShell Gallery](https://img.shields.io/powershellgallery/p/nxtools)
 
 
 Collection of Posix tools wrappers.

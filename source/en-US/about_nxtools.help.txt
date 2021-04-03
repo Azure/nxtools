@@ -1,5 +1,5 @@
 TOPIC
-    about_nxTools
+    about_nxtools
 
 SHORT DESCRIPTION
     Collection of Posix tools wrappers.
@@ -21,4 +21,3 @@ SEE ALSO
 
 KEYWORDS
       {{ Add coma separated keywords here }}
-

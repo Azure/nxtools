@@ -32,7 +32,7 @@ verifier:
   pester_install:
     MaximumVersion: '4.99.999'
   copy_folders:
-    - output/nxTools
+    - output/nxtools
   download:
 
 platforms:
