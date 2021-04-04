@@ -1,4 +1,4 @@
-function Get-OSDistributionInfo
+function Get-nxDistributionInfo
 {
     [CmdletBinding()]
     param
@@ -14,5 +14,5 @@ function Get-OSDistributionInfo
     $properties = Get-Content -Path $InfoFilePath |
         Get-PropertyHashFromListOutput -Regex '^\s*(?<property>[\w-\s]*)=\s*"?(?<val>.*)\b'
 
-    [PSCustomObject]$properties | Add-Member -TypeName 'OSDistribution.Info' -PassThru
+    [PSCustomObject]$properties | Add-Member -TypeName 'nx.DistributionInfo' -PassThru
 }

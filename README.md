@@ -18,7 +18,7 @@ Collection of Posix tools wrappers.
 - `Get-nxLinuxStandardBaseRelease`: A quick wrap of `lsb_release -a` command (this `lsb_release` must be present on the system).
 - `Get-nxOSDistributionInfo`: Parsing information found in `/etc/*-release`.
 - `Get-nxKernelInfo`: A simple wrapper around `uname -a`.
-- `Compare-nxFileSystemPermission`: An easy way to compare two sets of unix file system permissions.  
+- `Compare-nxFileSystemMode`: An easy way to compare two sets of unix file system permissions.  
     You can use a Symbolic notation (`rwxrwxrwx`), or the numericla permission (`777` or `0777`).
 
 ## Notes

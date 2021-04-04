@@ -1,4 +1,4 @@
-function Convert-LsEntryToFileSystemInfo
+function Convert-nxLsEntryToFileSystemInfo
 {
     param
     (
@@ -33,7 +33,7 @@ function Convert-LsEntryToFileSystemInfo
             {
                 $lineToParse | &$ErrorHandler
             }
-            elseif ($lineToParse -match 'Permission denied|No such file or directory')
+            elseif ($lineToParse -match 'Access denied|No such file or directory')
             {
                 Write-Error -Message $lineToParse
             }
@@ -47,8 +47,8 @@ function Convert-LsEntryToFileSystemInfo
             }
             else
             {
-                $nxFileSystemAccessRight, $nxLinkCount, $nxOwner, $nxGroup, $Length, $lastModifyDate, $lastModifyTime, $lastModifyTimezone, $fileName = $lineToParse -split '\s+',9
-                $nxFileSystemItemType = switch ($nxFileSystemAccessRight[0])
+                $Mode, $nxLinkCount, $nxOwner, $nxGroup, $Length, $lastModifyDate, $lastModifyTime, $lastModifyTimezone, $fileName = $lineToParse -split '\s+',9
+                $nxFileSystemItemType = switch ($Mode[0])
                 {
                     '-' { 'File' }
                     'd' { 'Directory' }
@@ -88,7 +88,7 @@ function Convert-LsEntryToFileSystemInfo
                         nxGroup                 = $nxGroup
                         Length                  = [long]::Parse($Length)
                         nxLinkCount             = $nxLinkCount
-                        nxFileSystemAccessRight = $nxFileSystemAccessRight
+                        Mode                    = $Mode
                     }
                 )
             }

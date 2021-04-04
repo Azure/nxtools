@@ -1,4 +1,4 @@
-function Convert-CharTonxFileSystemUserClass
+function Convert-nxSymbolToFileSystemUserClass
 {
     [CmdletBinding()]
     [OutputType([nxFileSystemUserClass])]

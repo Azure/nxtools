@@ -1,55 +1,55 @@
-class nxFileSystemPermissions
+class nxFileSystemMode
 {
     hidden static [string] $SymbolicTriadParser = '^[-dl]?(?<User>[-wrxsStT]{3})(?<Group>[-wrxsStT]{3})(?<Others>[-wrxsStT]{3})$'
     hidden static [string] $SymbolicOperationParser = '^(?<userClass>[ugoa]{1,3})(?<operator>[\-\+\=]{1})(?<permissions>[wrxTtSs-]{1,3})$'
     [nxFileSystemSpecialMode]  $SpecialModeFlags
-    [nxFileSystemAccessRight]  $OwnerPermission
-    [nxFileSystemAccessRight]  $GroupPermission
-    [nxFileSystemAccessRight]  $OthersPermission
+    [nxFileSystemAccessRight]  $OwnerMode
+    [nxFileSystemAccessRight]  $GroupMode
+    [nxFileSystemAccessRight]  $OthersMode
 
-    nxFileSystemPermissions()
+    nxFileSystemMode()
     {
         # default ctor, can be used like this:
         <#
-            [nxFileSystemPermissions]@{
+            [nxFileSystemMode]@{
                 SpecialModeFlags = 'None'
-                OwnerPermission  = 'Read, Write, Execute'
-                GroupPermission  = 'Read, Execute'
-                OthersPermission = 7
+                OwnerMode  = 'Read, Write, Execute'
+                GroupMode  = 'Read, Execute'
+                OthersMode = 7
             }
         #>
     }
 
-    nxFileSystemPermissions([String]$Permissions)
+    nxFileSystemMode([String]$Modes)
     {
-        if ($Permissions -match '^\d{3,4}$')
+        if ($Modes -match '^\d{3,4}$')
         {
             # Convert from Int to nxFileSystemAccessRight
-            $this.setNxFileSystemPermissionFromInt([int]::Parse($Permissions))
+            $this.setNxFileSystemModeFromInt([int]::Parse($Modes))
         }
-        elseif ($Permissions -cmatch [nxFileSystemPermissions]::SymbolicTriadParser)
+        elseif ($Modes -cmatch [nxFileSystemMode]::SymbolicTriadParser)
         {
-            $this.setNxFileSystemPermissionFromSymbolicTriadNotation($Permissions)
+            $this.setNxFileSystemModeFromSymbolicTriadNotation($Modes)
         }
-        elseif (-not ($Permissions -split '\s+').Where{$_ -cnotmatch [nxFileSystemPermissions]::SymbolicOperationParser})
+        elseif (-not ($Modes -split '\s+').Where{$_ -cnotmatch [nxFileSystemMode]::SymbolicOperationParser})
         {
             # All items of the space delimited Symbolic operations have been checked.
-            $this.DoSymbolicChmodOperation($Permissions)
+            $this.DoSymbolicChmodOperation($Modes)
         }
         else
         {
-            throw "The symbolic string '$Permissions' is invalid."
+            throw "The symbolic string '$Modes' is invalid."
         }
     }
 
-    nxFileSystemPermissions([int]$Permissions)
+    nxFileSystemMode([int]$Modes)
     {
-        $this.setNxFileSystemPermissionFromInt($Permissions)
+        $this.setNxFileSystemModeFromInt($Modes)
     }
 
-    hidden [void] setNxFileSystemPermissionFromSymbolicTriadNotation([string]$SymbolicTriad)
+    hidden [void] setNxFileSystemModeFromSymbolicTriadNotation([string]$SymbolicTriad)
     {
-        $null = $SymbolicTriad -cmatch [nxFileSystemPermissions]::SymbolicTriadParser
+        $null = $SymbolicTriad -cmatch [nxFileSystemMode]::SymbolicTriadParser
 
         $this.DoSymbolicChmodOperation(@(
             ('u=' + $Matches['User'])
@@ -58,22 +58,22 @@ class nxFileSystemPermissions
         ) -join ' ')
     }
 
-    hidden [void] setNxFileSystemPermissionFromInt([Int]$Permissions)
+    hidden [void] setNxFileSystemModeFromInt([Int]$Modes)
     {
         # Adding leading 0s to ensure we have a 0 for the special flags i.e. 777 -> 0777
-        $StringPermission = "{0:0000}" -f $Permissions
-        Write-Debug -Message "Trying to parse the permission set expressed by '$($Permissions)'."
+        $StringMode = "{0:0000}" -f $Modes
+        Write-Debug -Message "Trying to parse the permission set expressed by '$($Modes)'."
 
-        if ($StringPermission.Length -gt 4)
+        if ($StringMode.Length -gt 4)
         {
-            throw "Permission set should be expressed with 4 or 3 digits (you can omit the one on the left): setuid(4)/setgid(2)/sticky bit(1)|Owner|Group|Others). '$($StringPermission)'"
+            throw "Mode set should be expressed with 4 or 3 digits (you can omit the one on the left): setuid(4)/setgid(2)/sticky bit(1)|Owner|Group|Others). '$($StringMode)'"
         }
 
-        Write-Debug -Message "Parsing Special Mode Flags: $([int]::Parse($StringPermission[0]))"
-        $this.SpecialModeFlags = [int]::Parse($StringPermission[0])
-        $this.OwnerPermission  = [int]::Parse($StringPermission[1])
-        $this.GroupPermission  = [int]::Parse($StringPermission[2])
-        $this.OthersPermission = [int]::Parse($StringPermission[3])
+        Write-Debug -Message "Parsing Special Mode Flags: $([int]::Parse($StringMode[0]))"
+        $this.SpecialModeFlags = [int]::Parse($StringMode[0])
+        $this.OwnerMode  = [int]::Parse($StringMode[1])
+        $this.GroupMode  = [int]::Parse($StringMode[2])
+        $this.OthersMode = [int]::Parse($StringMode[3])
     }
 
     [void] DoChmodOperation ([nxFileSystemUserClass]$UserClass, [char]$Operator, [nxFileSystemAccessRight]$AccessRights, [nxFileSystemSpecialMode]$SpecialMode)
@@ -108,15 +108,15 @@ class nxFileSystemPermissions
         foreach ($symbolicChmodStringItem in $symbolicChmodList)
         {
             Write-Debug -Message "Doing Symbolic Operation '$symbolicChmodStringItem'."
-            if ($symbolicChmodStringItem -match [nxFileSystemPermissions]::SymbolicOperationParser)
+            if ($symbolicChmodStringItem -match [nxFileSystemMode]::SymbolicOperationParser)
             {
                 $userClassChars = $Matches['userClass']
                 $operator       = $Matches['operator']
                 $permissions    = $Matches['permissions']
-                $userClass      = [nxFileSystemUserClass](Convert-CharToNxFileSystemUserClass -Char $userClassChars)
+                $userClass      = [nxFileSystemUserClass](Convert-nxSymbolToFileSystemUserClass -Char $userClassChars)
                 Write-Debug -Message "Parsing $permissions"
-                $specialMode    = [nxFileSystemSpecialMode](Convert-CharToNxFileSystemSpecialMode -SpecialModeSymbol $permissions -UserClass $UserClass)
-                $accessRights   = [nxFileSystemAccessRight](Convert-CharToNxFileSystemAccessRight -AccessRightSymbol $permissions)
+                $specialMode    = [nxFileSystemSpecialMode](Convert-nxSymbolToFileSystemSpecialMode -SpecialModeSymbol $permissions -UserClass $UserClass)
+                $accessRights   = [nxFileSystemAccessRight](Convert-nxSymbolToFileSystemAccessRight -AccessRightSymbol $permissions)
 
                 $this.DoChmodOperation($userClass, $operator, $accessRights, $specialMode)
             }
@@ -129,15 +129,15 @@ class nxFileSystemPermissions
         switch ($UserClass)
         {
             { $_ -band [nxFileSystemUserClass]::User } {
-                $this.OwnerPermission = $AccessRights
+                $this.OwnerMode = $AccessRights
             }
 
             { $_ -band [nxFileSystemUserClass]::Group } {
-                $this.GroupPermission = $AccessRights
+                $this.GroupMode = $AccessRights
             }
 
             { $_ -band [nxFileSystemUserClass]::Others } {
-                $this.OthersPermission = $AccessRights
+                $this.OthersMode = $AccessRights
             }
 
             default {
@@ -154,15 +154,15 @@ class nxFileSystemPermissions
         switch ($UserClass)
         {
             { $_ -band [nxFileSystemUserClass]::User } {
-                $this.OwnerPermission = $this.OwnerPermission -bor $AccessRights
+                $this.OwnerMode = $this.OwnerMode -bor $AccessRights
             }
 
             { $_ -band [nxFileSystemUserClass]::Group } {
-                $this.GroupPermission = $this.GroupPermission -bor $AccessRights
+                $this.GroupMode = $this.GroupMode -bor $AccessRights
             }
 
             { $_ -band [nxFileSystemUserClass]::Others } {
-                $this.OthersPermission = $this.OthersPermission -bor $AccessRights
+                $this.OthersMode = $this.OthersMode -bor $AccessRights
             }
 
             default {
@@ -179,15 +179,15 @@ class nxFileSystemPermissions
         switch ($UserClass)
         {
             { $_ -band [nxFileSystemUserClass]::User } {
-                $this.OwnerPermission = $this.OwnerPermission -band -bnot $AccessRights
+                $this.OwnerMode = $this.OwnerMode -band -bnot $AccessRights
             }
 
             { $_ -band [nxFileSystemUserClass]::Group } {
-                $this.GroupPermission = $this.GroupPermission -band -bnot $AccessRights
+                $this.GroupMode = $this.GroupMode -band -bnot $AccessRights
             }
 
             { $_ -band [nxFileSystemUserClass]::Others } {
-                $this.OthersPermission = $this.OthersPermission -band -bnot $AccessRights
+                $this.OthersMode = $this.OthersMode -band -bnot $AccessRights
             }
 
             default {
@@ -200,24 +200,24 @@ class nxFileSystemPermissions
 
     [string] ToString()
     {
-        Write-Verbose -Message "$($this.OwnerPermission)"
-        Write-Verbose -Message "$(@($this.OthersPermission, $this.SpecialModeFlags) -join '|')"
+        Write-Verbose -Message "$($this.OwnerMode)"
+        Write-Verbose -Message "$(@($this.OthersMode, $this.SpecialModeFlags) -join '|')"
 
         $SymbolNotation = [PSCustomObject]@{
             UserClass         = [nxFileSystemUserClass]::User
-            AccessRight       = $this.OwnerPermission
+            AccessRight       = $this.OwnerMode
             UseDashWhenAbsent = $true
         },
         [PSCustomObject]@{
             UserClass         = [nxFileSystemUserClass]::Group
-            AccessRight       = $this.GroupPermission
+            AccessRight       = $this.GroupMode
             UseDashWhenAbsent = $true
         },
         [PSCustomObject]@{
             UserClass         = [nxFileSystemUserClass]::User
-            AccessRight       = $this.OthersPermission
+            AccessRight       = $this.OthersMode
             UseDashWhenAbsent = $true
-        } | Convert-FileSystemAccessRightToSymbol
+        } | Convert-nxFileSystemAccessRightToSymbol
 
         Write-Verbose -Message "SymbolNotation: $SymbolNotation"
         return ($SymbolNotation -join '')

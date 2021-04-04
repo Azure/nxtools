@@ -1,17 +1,17 @@
-function Compare-FileSystemPermission
+function Compare-nxMode
 {
     [CmdletBinding()]
     [OutputType([hashtable])]
     param
     (
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [nxFileSystemPermissions]
-        $ReferencePermission,
+        [nxFileSystemMode]
+        $ReferenceMode,
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [nxFileSystemPermissions[]]
-        [Alias('nxFileSystemAccessRight')]
-        $DifferencePermission,
+        [nxFileSystemMode[]]
+        [Alias('Mode')]
+        $DifferenceMode,
 
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [string]
@@ -24,27 +24,27 @@ function Compare-FileSystemPermission
     )
 
     process {
-        foreach ($PermissionItem in $DifferencePermission)
+        foreach ($ModeItem in $DifferenceMode)
         {
-            Write-Verbose -Message "Comparing '$ReferencePermission' with '$PermissionItem'"
+            Write-Verbose -Message "Comparing '$ReferenceMode' with '$ModeItem'"
 
-            $diffOwner = $ReferencePermission.OwnerPermission -bxor $PermissionItem.OwnerPermission
-            $diffGroup = $ReferencePermission.GroupPermission -bxor $PermissionItem.GroupPermission
-            $diffOthers = $ReferencePermission.OthersPermission -bxor $PermissionItem.OthersPermission
-            $diffSpecialModeFlags = $ReferencePermission.SpecialModeFlags -bxor $PermissionItem.SpecialModeFlags
+            $diffOwner = $ReferenceMode.OwnerMode -bxor $ModeItem.OwnerMode
+            $diffGroup = $ReferenceMode.GroupMode -bxor $ModeItem.GroupMode
+            $diffOthers = $ReferenceMode.OthersMode -bxor $ModeItem.OthersMode
+            $diffSpecialModeFlags = $ReferenceMode.SpecialModeFlags -bxor $ModeItem.SpecialModeFlags
 
             foreach ($enumValue in ([Enum]::GetValues([nxFileSystemAccessRight]).Where({$_ -ne [nxFileSystemAccessRight]::None})))
             {
                 if ($diffOwner -band $enumValue)
                 {
-                    $sideIndicator = $ReferencePermission.OwnerPermission -band $enumValue ? '<=' : '=>'
+                    $sideIndicator = $ReferenceMode.OwnerMode -band $enumValue ? '<=' : '=>'
                     Write-Verbose -Message "[$([nxFileSystemUserClass]::User)]'$enumValue' is only on this side [REF '$sideIndicator' DIFF]."
                     [PSCustomObject]@{
                         Class                = [nxFileSystemUserClass]::User
                         InputObject          = $enumValue
                         SideIndicator        = $sideIndicator
                         DifferencePath       = $DifferencePath
-                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-FileSystemPermissionComparisonToSymbolicOperation}
+                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-nxFileSystemModeComparisonToSymbolicOperation}
                 }
                 elseif ($IncludeEqual)
                 {
@@ -59,14 +59,14 @@ function Compare-FileSystemPermission
 
                 if ($diffGroup -band $enumValue)
                 {
-                    $sideIndicator = $ReferencePermission.GroupPermission -band $enumValue ? '<=' : '=>'
+                    $sideIndicator = $ReferenceMode.GroupMode -band $enumValue ? '<=' : '=>'
                     Write-Verbose -Message "[$([nxFileSystemUserClass]::Group)]'$enumValue' is only on this side [REF '$sideIndicator' DIFF]."
                     [PSCustomObject]@{
                         Class                = [nxFileSystemUserClass]::Group
                         InputObject          = $enumValue
                         SideIndicator        = $sideIndicator
                         DifferencePath       = $DifferencePath
-                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-FileSystemPermissionComparisonToSymbolicOperation}
+                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-nxFileSystemModeComparisonToSymbolicOperation}
                 }
                 elseif ($IncludeEqual)
                 {
@@ -81,14 +81,14 @@ function Compare-FileSystemPermission
 
                 if ($diffOthers -band $enumValue)
                 {
-                    $sideIndicator = $ReferencePermission.OthersPermission -band $enumValue ? '<=' : '=>'
+                    $sideIndicator = $ReferenceMode.OthersMode -band $enumValue ? '<=' : '=>'
                     Write-Verbose -Message "[$([nxFileSystemUserClass]::Others)]'$enumValue' is only on this side [REF '$sideIndicator' DIFF]."
                     [PSCustomObject]@{
                         Class                = [nxFileSystemUserClass]::Others
                         InputObject          = $enumValue
                         SideIndicator        = $sideIndicator
                         DifferencePath       = $DifferencePath
-                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-FileSystemPermissionComparisonToSymbolicOperation}
+                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-nxFileSystemModeComparisonToSymbolicOperation}
                 }
                 elseif ($IncludeEqual)
                 {
@@ -106,14 +106,14 @@ function Compare-FileSystemPermission
             {
                 if ($diffSpecialModeFlags -band $enumValue)
                 {
-                    $sideIndicator = $ReferencePermission.SpecialModeFlags -band $enumValue ? '<=' : '=>'
+                    $sideIndicator = $ReferenceMode.SpecialModeFlags -band $enumValue ? '<=' : '=>'
                     Write-Verbose -Message "[$([nxFileSystemUserClass]::None)]'$enumValue' is only on this side [REF '$sideIndicator' DIFF]."
                     [PSCustomObject]@{
                         Class                = [nxFileSystemUserClass]::None
                         InputObject          = $enumValue
                         SideIndicator        = $sideIndicator
                         DifferencePath       = $DifferencePath
-                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-FileSystemPermissionComparisonToSymbolicOperation}
+                    } | Add-Member -PassThru -Name RemediationOperation -MemberType ScriptProperty -Value {$this | Convert-nxFileSystemModeComparisonToSymbolicOperation}
                 }
                 elseif ($IncludeEqual)
                 {

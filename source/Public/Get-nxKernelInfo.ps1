@@ -1,4 +1,4 @@
-function Get-KernelInfo
+function Get-nxKernelInfo
 {
     [CmdletBinding()]
     param
@@ -28,5 +28,5 @@ function Get-KernelInfo
         processor        = $processor
         hardwarePlatform = $hardwarePlatform
         OS               = $OS
-    } | Add-Member -TypeName 'OS.KernelInfo' -PassThru
+    } | Add-Member -TypeName 'nx.KernelInfo' -PassThru
 }

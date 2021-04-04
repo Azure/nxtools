@@ -1,4 +1,4 @@
-function Get-FileSystemChildItem
+function Get-nxChildItem
 {
     param
     (
@@ -12,7 +12,11 @@ function Get-FileSystemChildItem
 
         [Parameter()]
         [Switch]
-        $Directory
+        $Directory,
+
+        [Parameter()]
+        [Switch]
+        $File
     )
 
     begin
@@ -22,7 +26,8 @@ function Get-FileSystemChildItem
         switch ($PSboundParameters.keys)
         {
             'Recurse'   { $lsParams += '--recursive' }
-            'Directory' { $lsParams += '-d' }
+            'Directory' { }
+            'File'      { }
             default     { Write-Debug -Message "Parameter '$_' not added automatically." }
         }
     }
@@ -32,7 +37,7 @@ function Get-FileSystemChildItem
         foreach ($pathItem in $Path.Where{$_})
         {
             $pathItem = [System.IO.Path]::GetFullPath($pathItem, $PWD.Path)
-            Invoke-NativeCommand -Executable 'ls' -Parameters ($lsParams + @($pathItem)) | Convert-lsEntryToFileSystemInfo -InitialPath $pathItem
+            Invoke-NativeCommand -Executable 'ls' -Parameters ($lsParams + @($pathItem)) | Convert-nxLsEntryToFileSystemInfo -InitialPath $pathItem
         }
     }
 }

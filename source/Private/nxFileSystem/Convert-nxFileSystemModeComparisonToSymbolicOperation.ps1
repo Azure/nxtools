@@ -1,4 +1,4 @@
-function Convert-FileSystemPermissionComparisonToSymbolicOperation
+function Convert-nxFileSystemModeComparisonToSymbolicOperation
 {
     [CmdletBinding()]
     [OutputType([string])]
@@ -22,7 +22,7 @@ function Convert-FileSystemPermissionComparisonToSymbolicOperation
 
     process {
         # FTR the side indicator points where the EnumValue is found: REFERENCE <=> DIFFERENCE
-        # The SympolicOperation generated aims to make the DifferencePermission compliante with the reference.
+        # The SympolicOperation generated aims to make the DifferenceMode compliante with the reference.
 
         Write-Debug "[$UserClass] [$EnumValue] [$SideIndicator]"
 
@@ -37,9 +37,9 @@ function Convert-FileSystemPermissionComparisonToSymbolicOperation
             $operator = '-'
         }
 
-        $UserClassSymbol = Convert-FileSystemUserClassToSymbol -UserClass $UserClass
-        $PermissionSymbol = Convert-FileSystemAccessRightToSymbol -AccessRight $EnumValue -UserClass $UserClass
+        $UserClassSymbol = Convert-nxFileSystemUserClassToSymbol -UserClass $UserClass
+        $ModeSymbol = Convert-nxFileSystemAccessRightToSymbol -AccessRight $EnumValue -UserClass $UserClass
 
-        return ('{0}{1}{2}' -f $UserClassSymbol, $operator, $PermissionSymbol)
+        return ('{0}{1}{2}' -f $UserClassSymbol, $operator, $ModeSymbol)
     }
 }

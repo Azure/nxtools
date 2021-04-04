@@ -1,4 +1,4 @@
-function Convert-CharToNxFileSystemSpecialMode
+function Convert-nxSymbolToFileSystemSpecialMode
 {
     [CmdletBinding()]
     [OutputType([nxFileSystemSpecialMode])]

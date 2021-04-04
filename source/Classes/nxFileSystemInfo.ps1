@@ -1,7 +1,7 @@
 
 class nxFileSystemInfo : System.IO.FileSystemInfo
 {
-    [nxFileSystemPermissions] $nxFileSystemAccessRight
+    [nxFileSystemMode] $Mode
     [nxFileSystemItemType] $nxFileSystemItemType
     [int] $nxLinkCount
     [System.String] $nxOwner
@@ -52,17 +52,21 @@ class nxFileSystemInfo : System.IO.FileSystemInfo
         $this.Name = [System.Io.Path]::GetFileName($this.FullPath)
     }
 
-    nxFileSystemInfo([string]$Path, $permission, $linkCount, $owner, $group, $Length, $lastModifyDate, $lastModifyTime, $fileName)
-    {
-        # ctor
-        $this.OriginalPath = $Path
-        $this.FullPath = [System.IO.Path]::GetFullPath($Path)
-        $this.Name = [System.Io.Path]::GetFileName($this.FullPath)
-    }
-
     [void] Delete()
     {
         Remove-Item -Path $this.FullName -ErrorAction Stop
         $this.Dispose()
+    }
+
+    hidden [string] GetModeWithItemType()
+    {
+        $modeSymbol = $this.Mode.ToString()
+        $typeSymbol = switch ($this.nxFileSystemItemType)
+        {
+            ([nxFileSystemItemType]::File) { '-' }
+            ([nxFileSystemItemType]::Directory) { 'd' }
+            ([nxFileSystemItemType]::Link) { 'l' }
+        }
+        return ('{0}{1}' -f $typeSymbol,$modeSymbol)
     }
 }

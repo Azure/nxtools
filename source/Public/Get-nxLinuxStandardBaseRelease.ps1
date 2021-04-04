@@ -1,6 +1,6 @@
 # By default on Debian 10, lsb-release package is not installed, so lsb_release
 # gives a command not found.
-function Get-LinuxStandardBaseRelease
+function Get-nxLinuxStandardBaseRelease
 {
     [OutputType([PSCustomObject])]
     [CmdletBinding()]
@@ -27,7 +27,7 @@ function Get-LinuxStandardBaseRelease
             }
         }
 
-    [PSCustomObject]$properties | Add-Member -TypeName 'Package.LsbRelease' -PassThru
+    [PSCustomObject]$properties | Add-Member -TypeName 'nx.LsbRelease' -PassThru
 }
 
-Set-Alias -Name Get-LsbRelease -Value Get-LinuxStandardBaseRelease
+Set-Alias -Name Get-LsbRelease -Value Get-nxLinuxStandardBaseRelease

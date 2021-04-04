@@ -1,4 +1,4 @@
-function Convert-FileSystemAccessRightToSymbol
+function Convert-nxFileSystemAccessRightToSymbol
 {
     [CmdletBinding()]
     param

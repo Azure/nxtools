@@ -1,4 +1,4 @@
-function Convert-CharToNxFileSystemAccessRight
+function Convert-nxSymbolToFileSystemAccessRight
 {
     [CmdletBinding()]
     [OutputType([nxFileSystemAccessRight])]

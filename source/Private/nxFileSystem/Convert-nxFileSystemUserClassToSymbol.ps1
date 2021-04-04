@@ -1,4 +1,4 @@
-function Convert-FileSystemUserClassToSymbol
+function Convert-nxFileSystemUserClassToSymbol
 {
     [CmdletBinding()]
     [OutputType([System.String])]
