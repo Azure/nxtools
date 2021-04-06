@@ -35,7 +35,7 @@ function Convert-nxLsEntryToFileSystemInfo
             }
             elseif ($lineToParse -match 'Access denied|No such file or directory')
             {
-                Write-Error -Message $lineToParse
+                throw $lineToParse
             }
             elseif ($lineToParse -match '^\s*total')
             {
@@ -53,6 +53,8 @@ function Convert-nxLsEntryToFileSystemInfo
                     '-' { 'File' }
                     'd' { 'Directory' }
                     'l' { 'Link' }
+                    'p' { 'Pipe' }
+                    's' { 'socket' }
                 }
 
                 $lastWriteTime = Get-Date -Date ($lastModifyDate + " " + $lastModifyTime + $lastModifyTimezone)

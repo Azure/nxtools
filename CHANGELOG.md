@@ -8,12 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial addition of commandd:
-    - `Get-nxFileSystemChildItem`: Similar to Get-ChildItem for the FileSystem provider but on Linux, this will use the `ls` command.
-    - `Get-nxLinuxStandardBaseRelease`: A quick wrap of `lsb_release -a` command (this `lsb_release` must be present on the system).
-    - `Get-nxOSDistributionInfo`: Parsing information found in `/etc/*-release`.
     - `Get-nxKernelInfo`: A simple wrapper around `uname -a`.
+    - `Get-nxLinuxStandardBaseRelease`: A quick wrap of `lsb_release -a` command (this `lsb_release` must be present on the system).
+    - `Get-nxDistributionInfo`: Parsing information found in `/etc/*-release`.
+    - `Get-nxItem`: Similar to Get-Item for file system provider but on Linux using `ls -d`.
+    - `Get-nxChildItem`: Similar to Get-ChildItem for the FileSystem provider but on Linux, this will use the `ls` command.
     - `Compare-nxFileSystemMode`: An easy way to compare two sets of unix file system permissions.  
         You can use a Symbolic notation (`rwxrwxrwx`), or the numericla permission (`777` or `0777`).
+    - `Get-nxLocalUser`: Read and parse local users from `/etc/passwd`.
+    - `Get-nxLocalGroup`: Read and parse local groups from `/etc/group`.
+    - `Set-nxMode`: Set files and folder mode (permisisons) using `chmod`.
+    - `Set-nxOwner`: Set the owner for files and folders (and optionally the group ownership) using `chown`.
+    - `Set-nxGroupOwnership`: Set the group owning the files and folders using `chgrp`.
 
 - Supporting Enums and Classes for File System permissions.
     - In order to make interpretation, Comparison, and manipulation of File system permissions easier,

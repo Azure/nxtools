@@ -66,7 +66,10 @@ class nxFileSystemInfo : System.IO.FileSystemInfo
             ([nxFileSystemItemType]::File) { '-' }
             ([nxFileSystemItemType]::Directory) { 'd' }
             ([nxFileSystemItemType]::Link) { 'l' }
+            ([nxFileSystemItemType]::Socket) { 's' }
+            ([nxFileSystemItemType]::Pipe) { 'p' }
         }
+
         return ('{0}{1}' -f $typeSymbol,$modeSymbol)
     }
 }
