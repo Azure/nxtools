@@ -24,12 +24,14 @@ stages:
         pool:
           vmImage: 'ubuntu 16.04'
         steps:
-          - task: GitVersion@5
-            name: gitVersion
+          - task: gitversion/setup@0
+            displayName: Install GitVersion
+            inputs:
+              versionSpec: '5.x'
+          - task: gitversion/execute@0
             displayName: 'Evaluate Next Version'
             inputs:
-              runtime: 'core'
-              configFilePath: 'GitVersion.yml'
+              useConfigFile: true
           - task: PowerShell@2
             name: package
             displayName: 'Build & Package Module'

@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Moved source in subfolders per categories (File/Folders, User/Groups).
+- Testing using Git Tools task (the new GitVersion).
 
 ### Fixed
 
