@@ -11,6 +11,8 @@ class nxLocalUser
         '(?<shellcmd>[^:]*)'
     ) -join ':'
 
+    hidden [bool] $HasBeenUpdated = $false
+
     [string] $UserName
     [string] $Password
     [int]    $UserId
@@ -39,6 +41,11 @@ class nxLocalUser
         $this.UserInfo = $Matches.userinfo
         $this.HomeDirectory = $Matches.homedir
         $this.ShellCommand = $Matches.shellcmd
+
+        $this | Add-Member -PassThru -MemberType ScriptProperty -Name MemberOf -Value {
+            # only calling the method when needed to avoid unecessary calls
+            $this.GetMemberOf()
+        }
     }
 
     static [bool] Exists([string]$UserName)
@@ -60,5 +67,32 @@ class nxLocalUser
     [string] ToString()
     {
         return $this.UserName
+    }
+
+    [void] Save()
+    {
+        if ([nxLocalUser]::Exists($this.Username))
+        {
+            $this.Update()
+        }
+        else
+        {
+            $this.SaveAsNewNxLocalAccount()
+        }
+    }
+
+    [void] Update()
+    {
+        $this | Set-nxLocalUser
+    }
+
+    [void] SaveAsNewNxLocalAccount()
+    {
+        $newUser = $this | Add-nxLocalUser
+    }
+
+    [nxLocalGroup[]] GetMemberOf()
+    {
+        return (Get-nxLocalUserMemberOf -User $this.UserName).MemberOf
     }
 }

@@ -20,10 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `Set-nxMode`: Set files and folder mode (permisisons) using `chmod`.
     - `Set-nxOwner`: Set the owner for files and folders (and optionally the group ownership) using `chown`.
     - `Set-nxGroupOwnership`: Set the group owning the files and folders using `chgrp`.
+    - `Get-nxLocalUserMemberOf`: Get the groups (`[nxLocalGroup[]]`) a Local user is member of.
 
 - Supporting Enums and Classes for File System permissions.
     - In order to make interpretation, Comparison, and manipulation of File system permissions easier,
       the module implements a few classes and enum to make that work.
+
+### Changed
+
+- Moved source in subfolders per categories (File/Folders, User/Groups).
 
 ### Fixed
 

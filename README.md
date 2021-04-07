@@ -5,7 +5,7 @@
 
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/nxtools?label=nxtools%20Preview)](https://www.powershellgallery.com/packages/nxtools/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/nxtools?label=nxtools)](https://www.powershellgallery.com/packages/nxtools/)
-[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/SynEdgy/nxtools/1)](https://synedgy.visualstudio.com/nxtools/_test/analytics?definitionId=10&contextType=build)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/SynEdgy/nxtools/10)](https://synedgy.visualstudio.com/nxtools/_test/analytics?definitionId=10&contextType=build)
 ![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/Synedgy/nxtools/10)
 ![PowerShell Gallery](https://img.shields.io/powershellgallery/p/nxtools)
 
@@ -71,6 +71,9 @@ Get-nxChildItem /tmp/testdir/ -File -recurse | FT -a
 Set-nxMode -Path /tmp/tmpjBneMD.tmp -Mode 'rwxr--r--' -Recurse -WhatIf  # chmod -R 0744
 Set-nxMode -Path /tmp/tmpjBneMD.tmp -Mode '0744' -Recurse -WhatIf       # chmod -R 0744
 Set-nxMode -Path /tmp/tmpjBneMD.tmp -Mode 744 -Recurse -Whatif          # chmod -R 0744
+
+# Get the other groups the members of the tape group are member of
+Get-nxLocalGroup tape | Get-nxLocalUser | Get-nxLocalUserMemberOf
 
 Set-nxOwner -Path /tmp/tmpjBneMD.tmp  -Owner (whoami) # chown gcolas /tmp/tmpjBnedMD.tmp
 

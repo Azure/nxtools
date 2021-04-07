@@ -26,4 +26,9 @@ class nxLocalGroup
             $this.GroupMember = $Matches.members -split ','
         }
     }
+
+    [System.String] ToString()
+    {
+        return $this.GroupName
+    }
 }
