@@ -2,7 +2,7 @@ function Get-nxItem
 {
     param
     (
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
         [System.String[]]
         $Path = '.'
     )
