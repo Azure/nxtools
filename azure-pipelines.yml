@@ -32,6 +32,7 @@ stages:
             displayName: 'Evaluate Next Version'
             inputs:
               useConfigFile: true
+              configfilePath: GitVersion.yml
           - task: PowerShell@2
             name: package
             displayName: 'Build & Package Module'
