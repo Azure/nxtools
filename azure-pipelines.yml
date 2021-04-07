@@ -22,7 +22,7 @@ stages:
       - job: Package_Module
         displayName: 'Package Module'
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         steps:
           - task: gitversion/setup@0
             displayName: Install GitVersion
