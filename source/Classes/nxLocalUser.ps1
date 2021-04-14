@@ -88,7 +88,7 @@ class nxLocalUser
 
     [void] SaveAsNewNxLocalAccount()
     {
-        $newUser = $this | Add-nxLocalUser
+        $null = $this | Add-nxLocalUser -ErrorAction 'Stop'
     }
 
     [nxLocalGroup[]] GetMemberOf()
