@@ -25,7 +25,7 @@ function Get-nxLocalUserMemberOf
                 $UserName = $UserItem
             }
 
-            $memberOf = (Invoke-NativeCommand -Executable 'id' -Parameters @('-G', '-n', $UserName)) -split '\s+' | Foreach-Object -Process {
+            $memberOf = (Invoke-NativeCommand -Executable 'id' -Parameters @('-G', '-n', $UserName) -ErrorAction 'Stop') -split '\s+' | Foreach-Object -Process {
                 if ($_ -match '^id:\s')
                 {
                     throw $_

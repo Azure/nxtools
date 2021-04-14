@@ -99,7 +99,7 @@ function Set-nxMode
                 }
 
                 Write-Verbose -Message ('chmod {0}' -f ($chmodParams -join ' '))
-                Invoke-NativeCommand -Executable 'chmod' -Parameters $chmodParams -Verbose:$verbose  | Foreach-Object -Process {
+                Invoke-NativeCommand -Executable 'chmod' -Parameters $chmodParams -Verbose:$verbose -ErrorAction 'Stop'  | Foreach-Object -Process {
                     Write-Error -Message $_
                 }
             }

@@ -21,6 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `Set-nxOwner`: Set the owner for files and folders (and optionally the group ownership) using `chown`.
     - `Set-nxGroupOwnership`: Set the group owning the files and folders using `chgrp`.
     - `Get-nxLocalUserMemberOf`: Get the groups (`[nxLocalGroup[]]`) a Local user is member of.
+    - `New-nxLocalUser`: Creates a new Local User using `useradd`.
+    - `Add-nxLocalGroupMember`: Add a user to a group using `useradd`.
+    - `New-nxLocalGroup`: Create a new Local Group using `groupadd`.
+    - `Set-nxLocalGroup`: Set the properties of an existing local group using `gpasswd`.
+    - `Set-nxLocalGroupMember`: Set (and replace) the members of an existing group using `gpasswd`.
+    - `Remove-nxLocalUser`: Delete a Local user using `userdel`.
+    - `Remove-nxLocalGroupMember`: Removes a user from a local group using `gpasswd`.
+    - `Remove-nxLocalGroup`: Deletes a local group using `groupdel`.
 
 - Supporting Enums and Classes for File System permissions.
     - In order to make interpretation, Comparison, and manipulation of File system permissions easier,

@@ -17,7 +17,7 @@ function Get-nxKernelInfo
         '-p' # '--processor',
         '-i' # '--hardware-platform',
         '-o' # '--operating-system'
-    ) -Verbose:$verbose
+    ) -Verbose:$verbose -ErrorAction 'Stop'
 
     if ($unameOutput -match '^\/.*uname:\s+')
     {
@@ -27,7 +27,7 @@ function Get-nxKernelInfo
     $kernelName, $ComputerName, $kernelRelease, $machineHardware, $processor, $hardwarePlatform, $OS = $unameOutput -split '\s'
 
     # uname --kernel-version
-    $kernelVersion = Invoke-NativeCommand -Executable 'uname' -Parameters '-v' -Verbose:$verbose
+    $kernelVersion = Invoke-NativeCommand -Executable 'uname' -Parameters '-v' -Verbose:$verbose -ErrorAction 'Stop'
 
     [PSCustomObject]@{
         kernelName       = $kernelName

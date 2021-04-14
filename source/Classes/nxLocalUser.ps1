@@ -50,7 +50,7 @@ class nxLocalUser
 
     static [bool] Exists([string]$UserName)
     {
-        $result = Invoke-NativeCommand -Executable 'id' -Parameters @('-u', $UserName)
+        $result = Invoke-NativeCommand -Executable 'id' -Parameters @('-u', $UserName) -ErrorAction 'Stop'
         [int]$ParsedUserID = -1
 
         if ([int]::TryParse($result, [ref]$ParsedUserID))

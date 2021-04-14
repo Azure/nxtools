@@ -27,7 +27,6 @@ Collection of Posix tools wrappers.
 - `Set-nxOwner`: Set the owner for files and folders (and optionally the group ownership) using `chown`.
 - `Set-nxGroupOwnership`: Set the group owning the files and folders using `chgrp`.
 
-
 # Usages
 
 ```powershell

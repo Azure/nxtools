@@ -97,7 +97,7 @@ function Set-nxGroupOwnership
                 }
 
                 Write-Verbose -Message ('chgrp {0}' -f ($chgrpParams -join ' '))
-                Invoke-NativeCommand -Executable 'chgrp' -Parameters $chgrpParams -Verbose:$verbose | Foreach-Object -Process {
+                Invoke-NativeCommand -Executable 'chgrp' -Parameters $chgrpParams -Verbose:$verbose -ErrorAction 'Stop' | Foreach-Object -Process {
                     Write-Error -Message $_
                 }
             }

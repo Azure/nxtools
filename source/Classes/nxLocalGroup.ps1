@@ -31,4 +31,16 @@ class nxLocalGroup
     {
         return $this.GroupName
     }
+
+    static [bool] Exists([string]$GroupName)
+    {
+        if (Get-nxLocalGroup -GroupName $GroupName -ErrorAction 'SilentlyContinue')
+        {
+            return $true
+        }
+        else
+        {
+            return $false
+        }
+    }
 }

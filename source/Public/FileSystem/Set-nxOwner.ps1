@@ -110,7 +110,7 @@ function Set-nxOwner
                 }
 
                 Write-Verbose -Message ('chown {0}' -f ($chownParams -join ' '))
-                Invoke-NativeCommand -Executable 'chown' -Parameters $chownParams -Verbose:$verbose | Foreach-Object -Process {
+                Invoke-NativeCommand -Executable 'chown' -Parameters $chownParams -Verbose:$verbose -ErrorAction 'Stop' | Foreach-Object -Process {
                     Write-Error -Message $_
                 }
             }
