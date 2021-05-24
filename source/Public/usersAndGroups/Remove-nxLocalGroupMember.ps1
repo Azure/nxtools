@@ -3,7 +3,7 @@ function Remove-nxLocalGroupMember
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType([void])]
     param (
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [String[]]
         $UserName,
 
@@ -19,11 +19,11 @@ function Remove-nxLocalGroupMember
     begin
     {
         $verbose = ($PSBoundParameters.ContainsKey('Verbose') -and $PSBoundParameters['Verbose']) -or $VerbosePreference -ne 'SilentlyContinue'
+        $hasGroupChanged = $false
     }
 
     process
     {
-        $hasGroupChanged = $false
 
         foreach ($UserNameItem in $UserName)
         {
@@ -35,22 +35,23 @@ function Remove-nxLocalGroupMember
                 )
             )
             {
-                Invoke-NativeCommand -Executable 'gpasswd' -Parameters $gpasswdParams -Verbose:$verbose -ErrorAction 'Stop' | ForEach-Object -Process {
-                    if ($_ -match '^gpasswd:')
-                    {
-                        throw $_
+                Invoke-NativeCommand -Executable 'gpasswd' -Parameters $gpasswdParams -Verbose:$verbose -ErrorAction 'Stop' |
+                    ForEach-Object -Process {
+                        if ($_ -match '^gpasswd:')
+                        {
+                            throw $_
+                        }
+                        else
+                        {
+                            Write-Verbose -Message $_
+                        }
                     }
-                    else
-                    {
-                        Write-Verbose -Message $_
-                    }
-                }
 
                 $hasGroupChanged = $true
             }
         }
 
-        if ($hasGroupChanged)
+        if ($hasGroupChanged -and $PassThru)
         {
             Get-nxLocalGroup -GroupName $GroupName
         }

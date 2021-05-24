@@ -22,4 +22,11 @@
     xDscResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'
     PSNativeCmdDevKit           = 'latest'
+
+    GuestConfiguration          = @{
+        version = 'latest'
+        Parameters = @{
+            AllowPrerelease = $true
+        }
+    }
 }

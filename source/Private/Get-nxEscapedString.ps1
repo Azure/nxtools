@@ -1,4 +1,4 @@
-function Get-nxEscapedPath
+function Get-nxEscapedString
 {
     [CmdletBinding()]
     [OutputType([System.String])]
@@ -6,11 +6,11 @@ function Get-nxEscapedPath
     (
         [Parameter(ValueFromPipeline = $true)]
         [System.String]
-        $Path
+        $String
     )
 
     process
     {
-        return ('"{0}"' -f $Path)
+        return ('''{0}''' -f ($String -replace "\'","''"))
     }
 }

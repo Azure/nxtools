@@ -8,6 +8,7 @@
 # OutputDirectory: ../output/Sampler
 CopyPaths:
   - en-US
+  # - Examples
   # - DSCResources
 Encoding: UTF8
 # Suffix to add to Root module PSM1 after merge (here, the Set-Alias exporting IB tasks)
@@ -47,13 +48,17 @@ BuildWorkflow:
     - Build_NestedModules_ModuleBuilder
     - Create_changelog_release_output
 
+  gcpol:
+    - Clean
+    - build
+    - build_guestconfiguration_packages
 
   pack:
     - build
     - package_module_nupkg
 
   hqrmtest:
-    - DscResource_Tests_Stop_On_Fail
+    - Invoke_HQRM_Tests_Stop_On_Fail
 
   # Defining test task to be run when invoking `./build.ps1 -Tasks test`
   test:
@@ -72,47 +77,22 @@ BuildWorkflow:
 ####################################################
 #       PESTER  Configuration                      #
 ####################################################
-
-Pester:
-  OutputFormat: NUnitXML
-  # Excludes one or more paths from being used to calculate code coverage.
-  ExcludeFromCodeCoverage:
-
-  # If no scripts are defined the default is to use all the tests under the project's
-  # tests folder or source folder (if present). Test script paths can be defined to
-  # only run tests in certain folders, or run specific test files, or can be use to
-  # specify the order tests are run.
-  Script:
-    - tests/Unit
-  # - tests/QA/module.tests.ps1
-  # - tests/QA
-  # - tests/Integration
-  ExcludeTag:
-    - helpQuality
-    - FunctionalQuality
-    - TestQuality
-  Tag:
-  CodeCoverageThreshold: 0 # Set to 0 to bypass
-  # CodeCoverageOutputFile: JaCoCo_.xml
-  # CodeCoverageOutputFileEncoding: ascii
-  # CodeCoverageMergedOutputFile: JaCoCo_Merged.xml
-  #  - Modules/DscResource.Common
-  #  - Templates
-
 DscTest:
-  MainGitBranch: main
-  ExcludeTag:
-    # - "Common Tests - New Error-Level Script Analyzer Rules"
-    # - "Common Tests - Validate Localization"
-    # - "Common Tests - Validate Example Files To Be Published"
-    # - "Common Tests - Validate Example Files"
-  Tag:
-  ExcludeSourceFile:
-    - output
-    - Modules
-  ExcludeModuleFile:
-    - Templates
-    - Modules
+  Pester:
+    Configuration:
+      Filter:
+        Tag:
+        ExcludeTag:
+          - Common Tests - New Error-Level Script Analyzer Rules
+      Output:
+        Verbosity: Detailed
+  Script:
+    ExcludeSourceFile:
+      - output
+    ExcludeModuleFile:
+      - Modules/DscResource.Common
+      - Modules/PSNativeCmdDevKit
+    MainGitBranch: main
 
 # Import ModuleBuilder tasks from a specific PowerShell module using the build
 # task's alias. Wildcard * can be used to specify all tasks that has a similar
@@ -124,6 +104,8 @@ ModuleBuildTasks:
   Sampler.GitHubTasks:
     - '*.ib.tasks'
   DscResource.DocGenerator:
+    - 'Task.*'
+  DscResource.Test:
     - 'Task.*'
 
 ####################################################

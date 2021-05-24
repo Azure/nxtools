@@ -1,5 +1,7 @@
 function Convert-nxLsEntryToFileSystemInfo
 {
+    [CmdletBinding()]
+    [OutputType([nxFileSystemInfo])]
     param
     (
         [Parameter(ValueFromPipeline = $true)]
@@ -15,7 +17,7 @@ function Convert-nxLsEntryToFileSystemInfo
         $ErrorHandler = {
             switch -Regex ($_)
             {
-                default { Write-Error "$_" }
+                default { Write-Error -Message $_ }
             }
         }
     )
@@ -31,11 +33,12 @@ function Convert-nxLsEntryToFileSystemInfo
 
             if ($lineToParse -is [System.Management.Automation.ErrorRecord])
             {
+                Write-Debug -Message 'Dispatching to ErrorHandler...'
                 $lineToParse | &$ErrorHandler
             }
-            elseif ($lineToParse -match 'Access denied|No such file or directory')
+            elseif ($lineToParse -match '^/.*ls:\s(?<message>.*)')
             {
-                throw $lineToParse
+                Write-Error -Message $Matches.message
             }
             elseif ($lineToParse -match '^\s*total')
             {

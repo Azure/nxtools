@@ -5,7 +5,7 @@ function Get-nxSourceFile
     param (
         [Parameter(Mandatory = $true)]
         [System.String]
-        [ValidateScript({$_ -as [uri] -or (Test-Path -Path $_ -PathType Leaf)})]
+        [ValidateScript({$null -ne ($_ -as [uri]).Scheme -or (Test-Path -Path $_ -PathType Leaf)})]
         [Alias('Uri')]
         $Path,
 
@@ -18,9 +18,18 @@ function Get-nxSourceFile
         $Force
     )
 
+    if (-not $PSBoundParameters.ContainsKey('DestinationFile'))
+    {
+        $fileName = [System.Io.FileInfo](Split-Path -Leaf $Path)
+        if ($null -ne ($Path -as [uri]).Scheme -and -not [string]::IsNullOrEmpty($fileName.Extension))
+        {
+            $DestinationFile = $fileName
+        }
+    }
+
     if (Test-Path -Path $DestinationFile)
     {
-        if ($Force)
+        if ($Force.IsPresent)
         {
             Remove-Item -Force -Recurse -Path $DestinationFile
         }

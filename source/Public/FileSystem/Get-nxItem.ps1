@@ -1,5 +1,7 @@
 function Get-nxItem
 {
+    [CmdletBinding()]
+    [OutputType([nxFileSystemInfo])]
     param
     (
         [Parameter(ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]

@@ -74,12 +74,12 @@ function Set-nxLocalGroup
 
         if ($PSCmdlet.ShouldProcess(
                 "Performing the unix command 'gpasswd $(($gpasswdParams -join ' '))'.",
-                "$GroupName",
+                $GroupName,
                 "Setting LocalGroup $GroupName"
             )
         )
         {
-            Invoke-NativeCommand -Executable 'gpasswd' -Parameters $gpasswdParams -Verbose:$verbose -ErrorAction 'Stop' | ForEach-Object -Process {
+            Invoke-NativeCommand -Executable 'gpasswd' -Parameters $gpasswdParams -Verbose:$verbose | ForEach-Object -Process {
                 if ($_ -match '^gpasswd:')
                 {
                     throw $_

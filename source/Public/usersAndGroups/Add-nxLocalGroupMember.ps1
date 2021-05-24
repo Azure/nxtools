@@ -5,18 +5,12 @@ function Add-nxLocalGroupMember
     param
     (
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [String[]]
-        [ValidateNotNullOrEmpty()]
+        [System.String]
         $GroupName,
 
-        [Parameter()]
-        [String]
-        [ValidateNotNullOrEmpty()]
-        $PrimaryGroupName,
-
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [String]
-        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [System.String[]]
+        [Alias('Member')]
         $UserName,
 
         [Parameter(ValueFromPipelineByPropertyName = $true)]
@@ -26,40 +20,41 @@ function Add-nxLocalGroupMember
 
     begin
     {
-        $verbose = ($PSBoundParameters.ContainsKey('Verbose') -and $PSBoundParameters['Verbose']) -or $VerbosePreference -ne 'SilentlyContinue'
+        $verbose = $VerbosePreference -or ($PSBoundParameters.ContainsKey('verbose') -and $PSBoundParameters['verbose'])
+        $hasGroupChanged = $false
     }
 
     process
     {
-        $userModParams = @('-a', '-G')
-
-        $userModParams += @($GroupName -join ',')
-
-
-        if ($PSBoundParameters.ContainsKey('PrimaryGroupName'))
+        foreach ($UserNameItem in $UserName)
         {
-            $userModParams += @('-g', $PrimaryGroupName)
+            $gpasswdParams = @('-a', $UserNameItem, $GroupName)
+
+            if ($PSCmdlet.ShouldProcess(
+                "Performing the unix command 'gpasswd $($gpasswdParams -join ' ')'.",
+                $UserNameItem,
+                "Removing $userNameItem grom group '$GroupName'.")
+            )
+            {
+                Invoke-NativeCommand -Executable 'gpasswd' -Parameters $gpasswdParams -Verbose:$verbose |
+                    ForEach-Object -Process {
+                        if ($_ -match '^gpasswd:')
+                        {
+                            throw $_
+                        }
+                        else
+                        {
+                            Write-Verbose -Message $_
+                        }
+                    }
+
+                $hasGroupChanged = $true
+            }
         }
 
-        $userModParams += @($UserName)
-
-        if (
-            $PScmdlet.ShouldProcess(
-                "Performing the unix command 'usermod $(($userModParams -join ' '))'.",
-                $UserName,
-                "adding $userName to groups: '$($groupName -join ',')."
-            )
-        )
+        if ($hasGroupChanged -and $PassThru)
         {
-            Invoke-NativeCommand -Executable 'usermod' -Parameters $userModParams -Verbose:$verbose -ErrorAction 'Stop' | ForEach-Object -Process {
-                throw $_
-            }
-
-            if ($PSBoundParameters.ContainsKey('PassThru') -and $PSBoundParameters['PassThru'])
-            {
-                # return the created user
-                Get-nxLocalUser -UserName $Username -ErrorAction Stop -Verbose:$verbose
-            }
+            Get-nxLocalGroup -GroupName $GroupName
         }
     }
 }
