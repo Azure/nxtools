@@ -1,10 +1,12 @@
 configuration LinuxGroupsMustExclude {
-    Import-DscResource -ModuleName nxtools -ModuleVersion 0.2.0
+    Import-DscResource -ModuleName nxtools -ModuleVersion 0.3.0
 
-        nxGroup LinuxGroupsMustExclude {
+    node LinuxGroupsMustExclude {
+        GC_LinuxGroup LinuxGroupsMustExclude {
+            # the group must be present but not contain root or test
             Ensure =  'Present'
             GroupName =  'foobar'
-            PreferredGroupID = 1005
-            MembersToExclude = 'root','gcolas'
+            MembersToExcludeAsString = 'root;test'
         }
+    }
 }

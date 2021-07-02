@@ -15,6 +15,7 @@ Encoding: UTF8
 # suffix: suffix.ps1
 prefix: prefix.ps1
 VersionedOutputDirectory: true
+BuiltModuleSubdirectory: module
 
 ####################################################
 #      ModuleBuilder Submodules Configuration      #
@@ -52,6 +53,12 @@ BuildWorkflow:
     - Clean
     - build
     - build_guestconfiguration_packages
+    - cleanUnzippedGCPackages
+
+  cleanUnzippedGCPackages: |
+    {
+      Get-ChildItem 'output\GCPolicyPackages\' -Directory | Remove-Item -Recurse -Force
+    }
 
   pack:
     - build
@@ -75,7 +82,7 @@ BuildWorkflow:
     - Create_ChangeLog_GitHub_PR
 
 ####################################################
-#       PESTER  Configuration                      #
+#       HQRM  Configuration                      #
 ####################################################
 DscTest:
   Pester:
@@ -93,6 +100,32 @@ DscTest:
       - Modules/DscResource.Common
       - Modules/PSNativeCmdDevKit
     MainGitBranch: main
+####################################################
+#       PESTER  Configuration                      #
+####################################################
+
+Pester:
+  OutputFormat: NUnitXML
+  # Excludes one or more paths from being used to calculate code coverage.
+  ExcludeFromCodeCoverage:
+    - Modules/DscResource.Common
+    - Modules/PSNativeCmdDevKit
+  # If no scripts are defined the default is to use all the tests under the project's
+  # tests folder or source folder (if present). Test script paths can be defined to
+  # only run tests in certain folders, or run specific test files, or can be use to
+  # specify the order tests are run.
+  Path:
+    - tests/Unit
+    # - tests/Unit
+    # - tests/Integration
+  Tag:
+  ExcludeTagFilter:
+    - PesterLanguage
+    - bugLinuxGCAgent
+  CodeCoverageThreshold: 0 # Set to 0 to bypass
+  CodeCoverageOutputFile: JaCoCo_coverage.xml
+  CodeCoverageOutputFileEncoding: ascii
+  CodeCoverageMergedOutputFile: JaCoCo_Merged.xml
 
 # Import ModuleBuilder tasks from a specific PowerShell module using the build
 # task's alias. Wildcard * can be used to specify all tasks that has a similar
