@@ -69,7 +69,7 @@ platforms:
   #   driver:
   #     image_urn: OpenLogic:CentOS:7.5:latest
   #     username: azure
-  #     password: <%=
+  #     password: < % =
   #         require "securerandom"
   #         if File.exists?("./.kitchen/pwd.txt")
   #           ENV['MACHINE_PASS'] = File.read("./.kitchen/pwd.txt")
@@ -78,7 +78,7 @@ platforms:
   #           File.open("./.kitchen/pwd.txt", "w") { |f| f.write ENV['MACHINE_PASS'] }
   #         end
   #         ENV['MACHINE_PASS']
-  #       %>
+  #       % >
   #   lifecycle:
   #     post_create:
   #     - remote: echo "<%= ENV['MACHINE_PASS'] %>" | sudo -S chmod +x /etc/sudoers.d

@@ -1,5 +1,5 @@
 configuration NotInstalledApplicationLinux {
-    Import-DscResource -ModuleName nxtools -ModuleVersion 0.3.0
+    Import-DscResource -ModuleName nxtools #-ModuleVersion 0.3.0
 
     node NotInstalledApplicationLinux {
         GC_NotInstalledApplicationLinux NotInstalledApplicationLinux {

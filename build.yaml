@@ -62,6 +62,7 @@ BuildWorkflow:
 
   pack:
     - build
+    - gcpack
     - package_module_nupkg
 
   hqrmtest:
@@ -147,6 +148,14 @@ ModuleBuildTasks:
 GitHubConfig:
   GitHubFilesToAdd:
     - 'CHANGELOG.md'
+  ReleaseAssets:
+    - output/GCPolicyPackages/InstalledApplicationLinux*.zip
+    - output/GCPolicyPackages/LinuxGroupsMustExclude*.zip
+    - output/GCPolicyPackages/LinuxGroupsMustInclude*.zip
+    - output/GCPolicyPackages/NotInstalledApplication*.zip
+    - output/GCPolicyPackages/PasswordPolicy_msid110*.zip
+    - output/GCPolicyPackages/PasswordPolicy_msid121*.zip
+    - output/GCPolicyPackages/PasswordPolicy_msid232*.zip
   GitHubConfigUserName: gaelcolas
   GitHubConfigUserEmail: psgallery@synedgy.com
   UpdateChangelogOnPrerelease: false

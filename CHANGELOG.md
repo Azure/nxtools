@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added GC Packages to the GH release publish step.
+
 - Added cmdlets for Packages:
     - `Get-nxPackageInstalled`: Getting the installed package basic info, automatically finding the Package Manager.
     - `Get-nxYumPackageInstalled`: Getting the installed yum/rpm package basic info.
