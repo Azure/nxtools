@@ -41,7 +41,6 @@ class nxGroup
             $currentState.GroupName = $nxLocalGroup.GroupName # Make sure we get exactly what's in /etc/passwd
             $currentState.Members = $nxLocalGroup.GroupMember # Only compare during Exact match
 
-
             if ($this.MembersToInclude -and -not $this.Members) # Contains
             {
                 $currentState.MembersToInclude = $nxLocalGroup.GroupMember.Where({$_ -in $this.MembersToInclude})
@@ -65,10 +64,11 @@ class nxGroup
             ).Where({ $null -ne $this.$_ }) #remove properties not set from comparison
 
             $compareStateParams = @{
-                CurrentValues = ($currentState | Convert-ObjectToHashtable)
-                DesiredValues = ($this | Convert-ObjectToHashtable)
-                ValuesToCheck = $valuesToCheck
-                IncludeValue  = $true
+                CurrentValues   = ($currentState | Convert-ObjectToHashtable)
+                DesiredValues   = ($this | Convert-ObjectToHashtable)
+                ValuesToCheck   = $valuesToCheck
+                IncludeValue    = $true
+                SortArrayValues = $true
             }
 
             $comparedState = Compare-DscParameterState @compareStateParams

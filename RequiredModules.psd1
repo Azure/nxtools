@@ -13,11 +13,21 @@
     Plaster                     = 'latest'
     ModuleBuilder               = 'latest'
     ChangelogManagement         = 'latest'
-    Sampler                     = 'latest'
+    Sampler                     = @{
+        version = 'latest'
+        Parameters = @{
+            AllowPrerelease = $true
+        }
+    }
     'Sampler.GitHubTasks'       = 'latest'
     MarkdownLinkCheck           = 'latest'
     'DscResource.Common'        = 'latest'
-    'DscResource.Test'          = 'latest'
+    'DscResource.Test'          = @{
+        version = 'latest'
+        Parameters = @{
+            AllowPrerelease = $true
+        }
+    }
     'DscResource.AnalyzerRules' = 'latest'
     xDscResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'

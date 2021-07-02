@@ -4,7 +4,7 @@ function Get-nxLocalUser
     [OutputType()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName = $true, ParameterSetName = 'byUserName', Position = 0)]
+        [Parameter(ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, ParameterSetName = 'byUserName', Position = 0)]
         [System.String[]]
         [Alias('GroupMember')]
         $UserName,

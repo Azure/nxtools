@@ -114,7 +114,7 @@ function New-nxLocalGroup
             })
         }
 
-        if ($PScmdlet.ShouldProcess("Performing the unix command 'groupadd $(($groupAddParams + @($GroupName)) -join ' ')'.", "$GroupName", "Adding LocalUser to $(hostname)"))
+        if ($PScmdlet.ShouldProcess("Performing the unix command 'groupadd $(($groupAddParams + @($GroupName)) -join ' ')'.", "$GroupName", "Adding LocalGroup to $(hostname)?") -or $Force.IsPresent)
         {
             Invoke-NativeCommand -Executable 'groupadd' -Parameter ($groupAddParams + @($GroupName)) -Verbose:$verbose -ErrorAction 'Stop' | Foreach-Object {
                 throw $_

@@ -5,6 +5,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added cmdlets for Packages:
+    - `Get-nxPackageInstalled`: Getting the installed package basic info, automatically finding the Package Manager.
+    - `Get-nxYumPackageInstalled`: Getting the installed yum/rpm package basic info.
+    - `Get-nxDpkgPackageInstalled`: Getting the installed dpkg/apt package basic info.
+    - `Get-nxPackage`: Getting the installed package detailed info, automatically finding the Package Manager.
+    - `Get-nxYumPackage`: Getting the installed yum/rpm package detailed info.
+    - `Get-nxDpkgPackage`: Getting the installed dpkg/apt package detailed info.
+
+- Update the classes and DSC Resources
+
+- Added GC policy config for creating GC packages
+    - InstalledApplicationLinux
+    - NotInstalledApplicationLinux
+    - linuxGroupsMustExclude
+    - linuxGroupsMustInclude
+    - msid110
+    - msid121
+    - msid232
+
 ## [0.2.0] - 2021-05-25
 
 ### Added
