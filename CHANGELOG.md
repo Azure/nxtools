@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - msid110
     - msid121
     - msid232
+    - LinuxLogAnalyticsAgentConnection
 
 ## [0.2.0] - 2021-05-25
 

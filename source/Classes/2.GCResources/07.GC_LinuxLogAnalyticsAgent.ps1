@@ -9,7 +9,7 @@
 # };
 
 [DscResource()]
-class GC_OmsAgent
+class GC_LinuxLogAnalyticsAgent
 {
     [DscProperty(Key)]
     [String] $WorkspaceId = "NotSpecified"
@@ -23,9 +23,9 @@ class GC_OmsAgent
     [DscProperty(NotConfigurable)]
     [Reason[]] $Reasons
 
-    [GC_OmsAgent] Get()
+    [GC_LinuxLogAnalyticsAgent] Get()
     {
-        $getResult = [GC_OmsAgent]@{
+        $getResult = [GC_LinuxLogAnalyticsAgent]@{
             WorkspaceId = $this.WorkspaceId
         }
 
@@ -38,30 +38,30 @@ class GC_OmsAgent
         $getResult.Reasons += $linuxApplicationGetResult.Reasons
 
         # get the information about connected workspace IDs
-        $workspaceDir = Get-ChildItem '/etc/opt/microsoft/omsagent' -ErrorAction SilentlyContinue
-        $workspaceIds = $workspaceDir | % { if(($_.Name -match '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$')) { $_.Name } }
+        $workspaceIds = $this.GetConnectedWorkpsaceId()
+        $reasonCodePrefix = 'LogAnalyticsAgent_'
         if($workspaceIds -ne $null)
         {
             if($workspaceIds.GetType().IsArray)
             {
                 $getResult.Reasons += [Reason]@{
-                    code = 'ConnectedWorkspaces'
-                    phrase = 'OmsAgent is connected to ''{0}'' workspaces.' -f ($workspaceIds -join ';')
+                    code = $reasonCodePrefix + 'WorkspaceID'
+                    phrase = 'The Log Analytics agent is connected to ''{0}'' workspaces.' -f ($workspaceIds -join ';')
                 }
             }
             else
             {
                 $getResult.Reasons += [Reason]@{
-                    code = 'ConnectedWorkspaces'
-                    phrase = 'OmsAgent is connected to ''{0}'' workspace.' -f $workspaceIds
+                    code = $reasonCodePrefix + 'WorkspaceID'
+                    phrase = 'The Log Analytics agent is connected to ''{0}'' workspace.' -f $workspaceIds
                 }
             }
         }
         else
         {
             $getResult.Reasons += [Reason]@{
-                code = 'ConnectedWorkspaces'
-                phrase = 'OmsAgent is not connected to any workspace.'
+                code = $reasonCodePrefix + 'NotConnected'
+                phrase = 'The Log Analytics agent is not connected.'
             }
         }
 
@@ -80,13 +80,19 @@ class GC_OmsAgent
             return $false
         }
 
-        $workspaceDir = Get-ChildItem '/etc/opt/microsoft/omsagent' -ErrorAction SilentlyContinue
-        $workspaceIds = $workspaceDir | % { if(($_.Name -match '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$')) { $_.Name } }
+        $workspaceIds = $this.GetConnectedWorkpsaceId()
         return ($workspaceIds -ne $null)
     }
 
     [void] Set()
     {
         throw "Remediation (Set) is not implemented."
+    }
+
+    [string] GetConnectedWorkpsaceId()
+    {
+        $workspaceDir = Get-ChildItem '/etc/opt/microsoft/omsagent' -ErrorAction SilentlyContinue
+        $workspaceIds = $workspaceDir | % { if(($_.Name -match '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$')) { $_.Name } }
+        return $workspaceIds
     }
 }
