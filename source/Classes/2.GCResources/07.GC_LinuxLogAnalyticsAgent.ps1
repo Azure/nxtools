@@ -21,6 +21,9 @@ class GC_LinuxLogAnalyticsAgent
     [string[]] $PackageShouldBeInstalled = @()
 
     [DscProperty(NotConfigurable)]
+    [bool] $ComplianceStatus = $false
+
+    [DscProperty(NotConfigurable)]
     [Reason[]] $Reasons
 
     [GC_LinuxLogAnalyticsAgent] Get()
@@ -35,35 +38,11 @@ class GC_LinuxLogAnalyticsAgent
             AttributesYmlContent = $this.AttributesYmlContent
         }
         $linuxApplicationGetResult = $linuxApplicationResource.Get()
-        $getResult.Reasons += $linuxApplicationGetResult.Reasons
+        $this.Reasons += $linuxApplicationGetResult.Reasons
 
         # get the information about connected workspace IDs
-        $workspaceIds = $this.GetConnectedWorkpsaceId()
-        $reasonCodePrefix = 'LogAnalyticsAgent_'
-        if($workspaceIds -ne $null)
-        {
-            if($workspaceIds.GetType().IsArray)
-            {
-                $getResult.Reasons += [Reason]@{
-                    code = $reasonCodePrefix + 'WorkspaceID'
-                    phrase = 'The Log Analytics agent is connected to ''{0}'' workspaces.' -f ($workspaceIds -join ';')
-                }
-            }
-            else
-            {
-                $getResult.Reasons += [Reason]@{
-                    code = $reasonCodePrefix + 'WorkspaceID'
-                    phrase = 'The Log Analytics agent is connected to ''{0}'' workspace.' -f $workspaceIds
-                }
-            }
-        }
-        else
-        {
-            $getResult.Reasons += [Reason]@{
-                code = $reasonCodePrefix + 'NotConnected'
-                phrase = 'The Log Analytics agent is not connected.'
-            }
-        }
+        $this.TestConnectionStatus()
+        $getResult.Reasons = $this.Reasons
 
         return $getResult
     }
@@ -75,13 +54,12 @@ class GC_LinuxLogAnalyticsAgent
             AttributesYmlContent = $this.AttributesYmlContent
         }
 
-        if(-not ($linuxApplicationResource.Test()))
+        if (-not ($linuxApplicationResource.Test()))
         {
             return $false
         }
 
-        $workspaceIds = $this.GetConnectedWorkpsaceId()
-        return ($workspaceIds -ne $null)
+        return $this.TestConnectionStatus()
     }
 
     [void] Set()
@@ -89,10 +67,56 @@ class GC_LinuxLogAnalyticsAgent
         throw "Remediation (Set) is not implemented."
     }
 
-    [string] GetConnectedWorkpsaceId()
+    [bool] TestConnectionStatus()
     {
         $workspaceDir = Get-ChildItem '/etc/opt/microsoft/omsagent' -ErrorAction SilentlyContinue
-        $workspaceIds = $workspaceDir | % { if(($_.Name -match '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$')) { $_.Name } }
-        return $workspaceIds
+        $connectedWorkspaceIds = @()
+        $workspaceDir | ForEach-Object { if (($_.Name -match '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$')) { $connectedWorkspaceIds = $connectedWorkspaceIds + $_.Name } }
+
+        $reasonCodePrefix = 'LogAnalyticsAgent_'
+        if ($connectedWorkspaceIds.Count -eq 0)
+        {
+            $this.ComplianceStatus = $false
+            $this.Reasons += [Reason]@{
+                code = $reasonCodePrefix + 'NotConnected'
+                phrase = 'The Log Analytics agent is not connected to any Workspace.'
+            }
+        }
+        else
+        {
+            $this.ComplianceStatus = $true
+            $notConnectedWorkspaceIds = @()
+            if ($this.WorkspaceId -ne "NotSpecified")
+            {
+                $workspaceIdList = @($this.WorkspaceId.Split(';').Trim())
+                $workspaceIdList = $workspaceIdList.ToLower()
+                $connectedWorkspaceIds = $connectedWorkspaceIds.ToLower()
+                foreach ($individualWorkspaceId in $workspaceIdList)
+                {
+                    if (-not($connectedWorkspaceIds -match $individualWorkspaceId))
+                    {
+                        $this.ComplianceStatus = $false
+                        $notConnectedWorkspaceIds = $notConnectedWorkspaceIds + $individualWorkspaceId
+                    }
+                }
+            }
+
+            if ($this.ComplianceStatus)
+            {
+                $this.Reasons += [Reason]@{
+                    code = $reasonCodePrefix + 'WorkspaceID'
+                    phrase = 'The Log Analytics agent is connected to ''{0}'' workspaces.' -f ($connectedWorkspaceIds -join ';')
+                }
+            }
+            else
+            {
+                $this.Reasons += [Reason]@{
+                    code = $reasonCodePrefix + 'WorkspaceID'
+                    phrase = 'The Log Analytics agent is not connected to ''{0}'' workspaces.' -f ($notConnectedWorkspaceIds -join ';')
+                }
+            }
+        }
+
+        return $this.ComplianceStatus
     }
 }
