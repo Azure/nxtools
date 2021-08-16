@@ -21,9 +21,6 @@ class GC_LinuxLogAnalyticsAgent
     [string[]] $PackageShouldBeInstalled = @()
 
     [DscProperty(NotConfigurable)]
-    [bool] $ComplianceStatus = $false
-
-    [DscProperty(NotConfigurable)]
     [Reason[]] $Reasons
 
     [GC_LinuxLogAnalyticsAgent] Get()
@@ -74,9 +71,9 @@ class GC_LinuxLogAnalyticsAgent
         $workspaceDir | ForEach-Object { if (($_.Name -match '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$')) { $connectedWorkspaceIds = $connectedWorkspaceIds + $_.Name } }
 
         $reasonCodePrefix = 'LogAnalyticsAgent_'
+        $ComplianceStatus = $false
         if ($connectedWorkspaceIds.Count -eq 0)
         {
-            $this.ComplianceStatus = $false
             $this.Reasons += [Reason]@{
                 code = $reasonCodePrefix + 'NotConnected'
                 phrase = 'The Log Analytics agent is not connected to any Workspace.'
@@ -84,7 +81,7 @@ class GC_LinuxLogAnalyticsAgent
         }
         else
         {
-            $this.ComplianceStatus = $true
+            $ComplianceStatus = $true
             $notConnectedWorkspaceIds = @()
             if ($this.WorkspaceId -ne "NotSpecified")
             {
@@ -95,13 +92,13 @@ class GC_LinuxLogAnalyticsAgent
                 {
                     if (-not($connectedWorkspaceIds -match $individualWorkspaceId))
                     {
-                        $this.ComplianceStatus = $false
+                        $ComplianceStatus = $false
                         $notConnectedWorkspaceIds = $notConnectedWorkspaceIds + $individualWorkspaceId
                     }
                 }
             }
 
-            if ($this.ComplianceStatus)
+            if ($ComplianceStatus)
             {
                 $this.Reasons += [Reason]@{
                     code = $reasonCodePrefix + 'WorkspaceID'
@@ -117,6 +114,6 @@ class GC_LinuxLogAnalyticsAgent
             }
         }
 
-        return $this.ComplianceStatus
+        return $ComplianceStatus
     }
 }
