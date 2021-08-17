@@ -29,18 +29,24 @@ class GC_LinuxLogAnalyticsAgent
             WorkspaceId = $this.WorkspaceId
         }
 
-        # Get the details about omsagent installation
         $linuxApplicationResource = [GC_InstalledApplicationLinux]@{
             Name = $this.WorkspaceId
             AttributesYmlContent = $this.AttributesYmlContent
         }
-        $linuxApplicationGetResult = $linuxApplicationResource.Get()
-        $this.Reasons += $linuxApplicationGetResult.Reasons
 
-        # get the information about connected workspace IDs
-        $this.TestConnectionStatus()
+        if ($linuxApplicationResource.Test())
+        {
+            $this.TestConnectionStatus()
+        }
+        else
+        {
+            $this.Reasons += [Reason]@{
+                code = 'LogAnalyticsAgent:LogAnalyticsAgent:ApplicationNotInstalled'
+                phrase = 'The Log Analytics agent application is not installed.'
+            }
+        }
+
         $getResult.Reasons = $this.Reasons
-
         return $getResult
     }
 
@@ -70,20 +76,20 @@ class GC_LinuxLogAnalyticsAgent
         $connectedWorkspaceIds = @()
         $workspaceDir | ForEach-Object { if (($_.Name -match '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$')) { $connectedWorkspaceIds = $connectedWorkspaceIds + $_.Name } }
 
-        $reasonCodePrefix = 'LogAnalyticsAgent_'
+        $reasonCodePrefix = 'LogAnalyticsAgent:LogAnalyticsAgent'
         $ComplianceStatus = $false
         if ($connectedWorkspaceIds.Count -eq 0)
         {
             $this.Reasons += [Reason]@{
-                code = $reasonCodePrefix + 'NotConnected'
-                phrase = 'The Log Analytics agent is not connected to any Workspace.'
+                code = $reasonCodePrefix + ':WorkspaceNotFound'
+                phrase = 'The Log Analytics agent application is not connected to any workspace.'
             }
         }
         else
         {
             $ComplianceStatus = $true
             $notConnectedWorkspaceIds = @()
-            if ($this.WorkspaceId -ne "NotSpecified")
+            if (-not($this.WorkspaceId -ieq "NotSpecified"))
             {
                 $workspaceIdList = @($this.WorkspaceId.Split(';').Trim())
                 $workspaceIdList = $workspaceIdList.ToLower()
@@ -101,15 +107,15 @@ class GC_LinuxLogAnalyticsAgent
             if ($ComplianceStatus)
             {
                 $this.Reasons += [Reason]@{
-                    code = $reasonCodePrefix + 'WorkspaceID'
-                    phrase = 'The Log Analytics agent is connected to ''{0}'' workspaces.' -f ($connectedWorkspaceIds -join ';')
+                    code = $reasonCodePrefix + ':ConnectedWorkspaces'
+                    phrase = "{0}" -f ($connectedWorkspaceIds -join ';')
                 }
             }
             else
             {
                 $this.Reasons += [Reason]@{
-                    code = $reasonCodePrefix + 'WorkspaceID'
-                    phrase = 'The Log Analytics agent is not connected to ''{0}'' workspaces.' -f ($notConnectedWorkspaceIds -join ';')
+                    code = $reasonCodePrefix + ':WorkspaceNotFound'
+                    phrase = 'Could not find a workspace with the specified workspace ID ''{0}'' connected to this machine.' -f ($notConnectedWorkspaceIds -join ';')
                 }
             }
         }
