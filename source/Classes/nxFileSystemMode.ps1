@@ -22,6 +22,10 @@ class nxFileSystemMode
 
     nxFileSystemMode([String]$Modes)
     {
+        # On CentOs, Redhat $Modes ends with "."
+        # Remove "." in $Modes.
+        $Modes=$Modes.replace(".","")
+
         if ($Modes -match '^\d{3,4}$')
         {
             # Convert from Int to nxFileSystemAccessRight
