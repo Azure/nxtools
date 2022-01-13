@@ -13,6 +13,8 @@ class GC_LinuxGroup : nxGroup
     GC_LinuxGroup()
     {
         # default ctor
+
+        $this.ConvertAsStringToBaseClass()
     }
 
     GC_LinuxGroup ([nxGroup] $nxGroup)

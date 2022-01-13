@@ -1,5 +1,5 @@
 configuration LinuxGroupsMustInclude {
-    Import-DscResource -ModuleName nxtools #-ModuleVersion 0.3.0
+    Import-DscResource -ModuleName nxtools
 
     node LinuxGroupsMustInclude {
         GC_LinuxGroup LinuxGroupsMustInclude {

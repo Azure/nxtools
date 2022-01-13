@@ -1,6 +1,6 @@
 class nxFileSystemMode
 {
-    hidden static [string] $SymbolicTriadParser = '^[-dlsp]?(?<User>[-wrxsStT]{3})(?<Group>[-wrxsStT]{3})(?<Others>[-wrxsStT]{3})$'
+    hidden static [string] $SymbolicTriadParser = '^[-dlsp]?(?<User>[-wrxsStT]{3})(?<Group>[-wrxsStT]{3})(?<Others>[-wrxsStT]{3})\.?$'
     hidden static [string] $SymbolicOperationParser = '^(?<userClass>[ugoa]{1,3})(?<operator>[\-\+\=]{1})(?<permissions>[wrxTtSs-]{1,3})$'
     [nxFileSystemSpecialMode]  $SpecialModeFlags
     [nxFileSystemAccessRight]  $OwnerMode

@@ -57,7 +57,7 @@ BuildWorkflow:
 
   cleanUnzippedGCPackages: |
     {
-      Get-ChildItem 'output\GCPolicyPackages\' -Directory | Remove-Item -Recurse -Force
+      Get-ChildItem 'output\GCPackages\' -Directory | Remove-Item -Recurse -Force
     }
 
   pack:
@@ -79,7 +79,7 @@ BuildWorkflow:
   publish:
     - publish_module_to_gallery
     - Publish_Release_To_GitHub
-    # - Publish_GitHub_Wiki_Content
+    - Publish_GitHub_Wiki_Content
     - Create_ChangeLog_GitHub_PR
 
 ####################################################
@@ -92,6 +92,7 @@ DscTest:
         Tag:
         ExcludeTag:
           - Common Tests - New Error-Level Script Analyzer Rules
+          # - Common Tests - Validate Example Files
       Output:
         Verbosity: Detailed
   Script:
@@ -152,7 +153,8 @@ GitHubConfig:
     - output/GCPolicyPackages/InstalledApplicationLinux*.zip
     - output/GCPolicyPackages/LinuxGroupsMustExclude*.zip
     - output/GCPolicyPackages/LinuxGroupsMustInclude*.zip
-    - output/GCPolicyPackages/NotInstalledApplication*.zip
+    - output/GCPolicyPackages/No90CloudInitUserAllowdNoPasswdInSudoers*.zip
+    - output/GCPolicyPackages/NotInstalledApplicationLinux*.zip
     - output/GCPolicyPackages/PasswordPolicy_msid110*.zip
     - output/GCPolicyPackages/PasswordPolicy_msid121*.zip
     - output/GCPolicyPackages/PasswordPolicy_msid232*.zip

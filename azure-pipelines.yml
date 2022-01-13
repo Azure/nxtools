@@ -24,40 +24,29 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
+
+          - pwsh: |
+              dotnet tool install --global GitVersion.Tool
+              $gitVersionObject = dotnet-gitversion | ConvertFrom-Json
+              $gitVersionObject.psobject.properties.Foreach{
+                  Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
+                  Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
+              }
+              Write-Host -Object "##vso[build.updatebuildnumber]$($gitVersionObject.FullSemVer)"
+            displayName: Calculate ModuleVersion (GitVersion)
+            name: gitVersion
+
           - task: PowerShell@2
             enabled: true
-            displayName: Install pwsh-preview
+            displayName: Enable PSSubsystemPluginModel
             inputs:
               pwsh: true
               targetType: inline
               continueOnError: true
               script: |
-                # Update the list of packages
-                sudo apt-get update
-                # Install pre-requisite packages.
-                sudo apt-get install -y wget apt-transport-https software-properties-common
-                # Download the Microsoft repository GPG keys
-                wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
-                # Register the Microsoft repository GPG keys
-                sudo dpkg -i packages-microsoft-prod.deb
-                # Update the list of products
-                sudo apt-get update
-                # Enable the "universe" repositories
-                sudo add-apt-repository universe
-                # Install PowerShell
-                sudo apt-get install -y powershell-preview
-                pwsh-preview -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
-                pwsh-preview -c 'Install-Module -Name PSDesiredStateConfiguration -AllowPrerelease -Force'
-
-          - task: gitversion/setup@0
-            displayName: Install GitVersion
-            inputs:
-              versionSpec: '5.x'
-          - task: gitversion/execute@0
-            displayName: 'Evaluate Next Version'
-            inputs:
-              useConfigFile: true
-              configfilePath: GitVersion.yml
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
           - task: PowerShell@2
             name: package
@@ -67,20 +56,17 @@ stages:
               targetType: inline
               continueOnError: true
               script: |
-                pwsh-preview -c {
+                pwsh -c {
                   ./build.ps1 -Tasks noop -ResolveDependency
                   Import-Module GuestConfiguration
-                  Enable-ExperimentalFeature -Name GuestConfiguration.Pester
-                  Enable-ExperimentalFeature -Name GuestConfiguration.SetScenario
-                  Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue
                 }
 
-                pwsh-preview -c {
+                pwsh -c {
                   Import-Module -Name PSDesiredStateConfiguration -PassThru
                   ./build.ps1 -tasks pack
                 }
             env:
-              ModuleVersion: $(gitVersion.NuGetVersionV2)
+              ModuleVersion: $(NuGetVersionV2)
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Pipeline Artifact'
             inputs:
@@ -95,7 +81,7 @@ stages:
       - job: Test_HQRM
         displayName: 'HQRM'
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -108,9 +94,18 @@ stages:
             name: test
             displayName: 'Run HQRM Test'
             inputs:
-              filePath: './build.ps1'
-              arguments: '-Tasks hqrmtest'
-              pwsh: false
+              pwsh: true
+              targetType: inline
+              script: |
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
+
+                pwsh -c {
+                  Import-Module -Name PSDesiredStateConfiguration -PassThru
+                  ./build.ps1 -tasks hqrmtest
+                }
+
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
             condition: succeededOrFailed()
@@ -122,7 +117,7 @@ stages:
       - job: Test_Unit
         displayName: 'Unit'
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -156,7 +151,7 @@ stages:
       # - job: Test_Integration
       #   displayName: 'Integration'
       #   pool:
-      #     vmImage: 'ubuntu 16.04'
+      #     vmImage: 'ubuntu-latest'
       #   timeoutInMinutes: 0
       #   steps:
       #     - task: DownloadPipelineArtifact@2
@@ -185,7 +180,7 @@ stages:
         displayName: 'Publish Code Coverage'
         dependsOn: Test_Unit
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - pwsh: |
@@ -233,7 +228,7 @@ stages:
       - job: Deploy_Module
         displayName: 'Deploy Module'
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         steps:
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Pipeline Artifact'

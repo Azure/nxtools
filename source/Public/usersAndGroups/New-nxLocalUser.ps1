@@ -276,8 +276,31 @@ function New-nxLocalUser
 
         if ($PScmdlet.ShouldProcess("Performing the unix command 'useradd $(($userAddParams + @($UserName)) -join ' ')'.", "$UserName", "Adding LocalUser to $(hostname)"))
         {
+            $warn = $false
             Invoke-NativeCommand -Executable 'useradd' -Parameter ($userAddParams + @($UserName)) -Verbose:$verbose -ErrorAction 'Stop' | Foreach-Object {
-                throw $_
+                if ($_.ToString() -match '^useradd: warning:(?<message>.*)')
+                {
+                    # we're seeing a warning only
+                    $warn = $true
+                }
+                elseif ($_.ToString() -match '^Usage:')
+                {
+                    throw ('Invalid Syntax. useradd {0}' -f (($userAddParams + @($UserName)) -join ' '))
+                }
+                elseif ($_.ToString() -match '^useradd:|^Usage:')
+                {
+                    # We're seeing an error, what comes after is an error.
+                    $warn = $false
+                }
+
+                if ($true -eq $warn)
+                {
+                    Write-Warning -Message $_
+                }
+                else
+                {
+                    Write-Error -Message $_
+                }
             }
 
             if ($PSBoundParameters.ContainsKey('PassThru') -and $PSBoundParameters['PassThru'])

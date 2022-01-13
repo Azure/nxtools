@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added GC Packages to the GH release publish step.
-
+- Added KitchenCI tests for the packages on ubuntu-18.04, debian-10, and centos-7.5.
+- Added the `Functions` test suite for Kitchen-Pester.
+- Added `[nxFileLine]` and `[nxFileContentReplace]` DSC Resources to manage file content.
+- Added examples for DSC Resources.
+- Added GC Packages to the GitHub release publish step.
 - Added cmdlets for Packages:
     - `Get-nxPackageInstalled`: Getting the installed package basic info, automatically finding the Package Manager.
     - `Get-nxYumPackageInstalled`: Getting the installed yum/rpm package basic info.
@@ -27,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - msid110
     - msid121
     - msid232
+
+### Fixed
+
+- Fixed the issue on centos/red hat where the MODE contains a trailing `.`.
 
 ## [0.2.0] - 2021-05-25
 

@@ -2,7 +2,7 @@ BeforeAll {
     $ProgressPreference = 'SilentlyContinue'
     $ErrorActionPreference = 'Continue'
     $ModulePath = (Join-Path -Path '/tmp/verifier' -ChildPath 'modules')
-    $packageZipPath = Join-Path -Path $ModulePath -ChildPath 'GCPolicyPackages/PasswordPolicy_msid110*.zip'
+    $packageZipPath = Join-Path -Path $ModulePath -ChildPath 'GCPackages/PasswordPolicy_msid110*.zip'
     $packageZip = Get-Item -Path $packageZipPath -errorAction SilentlyContinue
 }
 
@@ -20,7 +20,7 @@ Describe 'Password Policy msid1.10 GC Package (sshdPermitEmptyPasswords not enab
     it 'Sshd''s PermitEmptyPasswords is not disabled' {
         # #PermitEmptyPasswords no
         $result = $null
-        $result = Get-GuestConfigurationPackageComplianceStatus -Package $packageZip
+        $result = Get-GuestConfigurationPackageComplianceStatus -Path $packageZip
         $result.Resources.Reasons | Should -not -BeNullOrEmpty
     }
 }

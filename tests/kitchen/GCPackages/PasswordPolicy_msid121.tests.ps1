@@ -2,7 +2,7 @@ BeforeAll {
     $ProgressPreference = 'SilentlyContinue'
     $ErrorActionPreference = 'Continue'
     $ModulePath = (Join-Path -Path '/tmp/verifier' -ChildPath 'modules')
-    $packageZipPath = Join-Path -Path $ModulePath -ChildPath 'GCPolicyPackages/PasswordPolicy_msid121*.zip'
+    $packageZipPath = Join-Path -Path $ModulePath -ChildPath 'GCPackages/PasswordPolicy_msid121*.zip'
     $packageZip = Get-Item -Path $packageZipPath -errorAction SilentlyContinue
 }
 
@@ -25,7 +25,7 @@ Describe 'Password Policy msid12.1 GC Package (no accounts without passwords)' {
         }
 
         $result = $null
-        $result = Get-GuestConfigurationPackageComplianceStatus -Package $packageZip
+        $result = Get-GuestConfigurationPackageComplianceStatus -Path $packageZip
         $result.Resources.Reasons | Should -BeNullOrEmpty
     }
 
@@ -38,7 +38,7 @@ Describe 'Password Policy msid12.1 GC Package (no accounts without passwords)' {
         }
 
         $result = $null
-        $result = Get-GuestConfigurationPackageComplianceStatus -Package $packageZip
+        $result = Get-GuestConfigurationPackageComplianceStatus -Path $packageZip
         $result.Resources.Reasons | Should -not -BeNullOrEmpty
     }
 }
