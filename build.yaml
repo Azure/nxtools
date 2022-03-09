@@ -158,8 +158,8 @@ GitHubConfig:
     - output/GCPackages/PasswordPolicy_msid110*.zip
     - output/GCPackages/PasswordPolicy_msid121*.zip
     - output/GCPackages/PasswordPolicy_msid232*.zip
-  GitHubConfigUserName: gaelcolas
-  GitHubConfigUserEmail: psgallery@synedgy.com
+  GitHubConfigUserName: NA
+  GitHubConfigUserEmail: NA@microsoft.com
   UpdateChangelogOnPrerelease: false
 
 ####################################################

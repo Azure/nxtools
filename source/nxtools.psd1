@@ -16,10 +16,10 @@
     Author               = 'Gael Colas'
 
     # Company or vendor of this module
-    CompanyName          = 'SynEdgy Limited'
+    CompanyName          = 'Microsoft'
 
     # Copyright statement for this module
-    Copyright            = '(c) SynEdgy Limited. All rights reserved.'
+    Copyright            = '(c) Microsoft. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description          = 'Collection of Posix tools wrappers.'
@@ -90,10 +90,10 @@
             Tags = @('linux', 'sysadmin', 'helper')
 
             # A URL to the license for this module.
-            LicenseUri   = 'https://github.com/SynEdgy/nxtools/blob/main/LICENSE'
+            LicenseUri   = 'https://github.com/Azure/nxtools/blob/main/LICENSE'
 
             # A URL to the main website for this project.
-            ProjectUri   = 'https://github.com/SynEdgy/nxtools/'
+            ProjectUri   = 'https://github.com/Azure/nxtools/'
 
             # A URL to an icon representing this module.
             IconUri      = ''
