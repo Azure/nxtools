@@ -4,7 +4,7 @@ enum nxSupportedPackageType
     yum
     # dnf
     # rpm
-    # apt
+    apt
     # zypper
     # snap
 }

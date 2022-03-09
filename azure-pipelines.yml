@@ -24,24 +24,49 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - task: gitversion/setup@0
-            displayName: Install GitVersion
+
+          - pwsh: |
+              dotnet tool install --global GitVersion.Tool
+              $gitVersionObject = dotnet-gitversion | ConvertFrom-Json
+              $gitVersionObject.psobject.properties.Foreach{
+                  Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
+                  Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
+              }
+              Write-Host -Object "##vso[build.updatebuildnumber]$($gitVersionObject.FullSemVer)"
+            displayName: Calculate ModuleVersion (GitVersion)
+            name: gitVersion
+
+          - task: PowerShell@2
+            enabled: true
+            displayName: Enable PSSubsystemPluginModel
             inputs:
-              versionSpec: '5.x'
-          - task: gitversion/execute@0
-            displayName: 'Evaluate Next Version'
-            inputs:
-              useConfigFile: true
-              configfilePath: GitVersion.yml
+              pwsh: true
+              targetType: inline
+              continueOnError: true
+              script: |
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
+
           - task: PowerShell@2
             name: package
             displayName: 'Build & Package Module'
             inputs:
-              filePath: './build.ps1'
-              arguments: '-ResolveDependency -tasks pack'
               pwsh: true
+              targetType: inline
+              continueOnError: true
+              script: |
+                pwsh -c {
+                  ./build.ps1 -Tasks noop -ResolveDependency
+                  Import-Module GuestConfiguration
+                }
+
+                pwsh -c {
+                  Import-Module -Name PSDesiredStateConfiguration -PassThru
+                  ./build.ps1 -tasks pack
+                }
             env:
-              ModuleVersion: $(gitVersion.NuGetVersionV2)
+              ModuleVersion: $(NuGetVersionV2)
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Pipeline Artifact'
             inputs:
@@ -56,7 +81,7 @@ stages:
       - job: Test_HQRM
         displayName: 'HQRM'
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -69,9 +94,18 @@ stages:
             name: test
             displayName: 'Run HQRM Test'
             inputs:
-              filePath: './build.ps1'
-              arguments: '-Tasks hqrmtest'
-              pwsh: false
+              pwsh: true
+              targetType: inline
+              script: |
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
+
+                pwsh -c {
+                  Import-Module -Name PSDesiredStateConfiguration -PassThru
+                  ./build.ps1 -tasks hqrmtest
+                }
+
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
             condition: succeededOrFailed()
@@ -83,7 +117,7 @@ stages:
       - job: Test_Unit
         displayName: 'Unit'
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -117,7 +151,7 @@ stages:
       # - job: Test_Integration
       #   displayName: 'Integration'
       #   pool:
-      #     vmImage: 'ubuntu 16.04'
+      #     vmImage: 'ubuntu-latest'
       #   timeoutInMinutes: 0
       #   steps:
       #     - task: DownloadPipelineArtifact@2
@@ -146,7 +180,7 @@ stages:
         displayName: 'Publish Code Coverage'
         dependsOn: Test_Unit
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - pwsh: |
@@ -194,7 +228,7 @@ stages:
       - job: Deploy_Module
         displayName: 'Deploy Module'
         pool:
-          vmImage: 'ubuntu 16.04'
+          vmImage: 'ubuntu-latest'
         steps:
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Pipeline Artifact'

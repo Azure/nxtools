@@ -173,6 +173,7 @@ class nxGroup
                 $newNxLocalGroupParams = @{
                     GroupName = $this.GroupName
                     PassThru = $true
+                    Confirm = $false
                 }
 
                 if ($this.PreferredGroupID)
@@ -203,7 +204,7 @@ class nxGroup
                     }
                 }
             }
-            elseif ($this.Reasons.Count -gt 0)
+            elseif ($currentState.Reasons.Count -gt 0)
             {
                 $nxLocalGroup = Get-nxLocalGroup -GroupName $this.GroupName
                 # The Group exists but is not set properly
@@ -211,11 +212,13 @@ class nxGroup
                 {
                     ':PreferredGroupID$'
                     {
+                        Write-Verbose -Message "Attempting to set the GroupID to '$($this.PreferredGroupID)'."
                         Set-nxLocalGroupGID -GroupName $nxLocalGroup.GroupName -GroupID $this.PreferredGroupID -Confirm:$false
                     }
 
                     ':Members$'
                     {
+                        Write-Verbose -Message "Attempting to set the Members for group '$($nxLocalGroup.GroupName)' to '$($this.Members -join "', '")'."
                         Set-nxLocalGroup -GroupName $nxLocalGroup.GroupName -Member $this.Members -Confirm:$false
                     }
 
@@ -223,6 +226,7 @@ class nxGroup
                     {
                         if (-not $this.Members)
                         {
+                            Write-Verbose -Message "Attempting to add missing Members to Include for group '$($nxLocalGroup.GroupName)' to '$($this.MembersToInclude -join "', '")'."
                             $this.MembersToInclude.Where({
                                 $_ -notin $nxLocalGroup.GroupMember
                             }) | Add-nxLocalGroupMember -GroupName $this.GroupName -Confirm:$false
@@ -233,9 +237,12 @@ class nxGroup
                     {
                         if (-not $this.Members)
                         {
-                            $this.MembersToExclude.Where({
+                            $usersToRemoveFromGroup = $this.MembersToExclude.Where({
                                 $_ -in $nxLocalGroup.GroupMember
-                            }) | Remove-nxLocalGroupMember -GroupName $this.GroupName -Confirm:$false
+                            })
+
+                            Write-Verbose -Message "Attempting to remove extra Members Excluded from group '$($nxLocalGroup.GroupName)' ('$($usersToRemoveFromGroup -join "', '")')."
+                            $usersToRemoveFromGroup | Remove-nxLocalGroupMember -GroupName $this.GroupName -Confirm:$false
                         }
                     }
                 }

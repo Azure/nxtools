@@ -1,3 +1,40 @@
+
+<#
+.SYNOPSIS
+Command to tar or archive files and folders using the GNU 'tar' command.
+
+.DESCRIPTION
+This command saves files and folders together in a single archive, with optional compression.
+The command is a wrapper for the command 'tar' that ought to be availble on the system to
+be able to use the command.
+
+.PARAMETER Path
+Array of Path to the files and folder to add to the archive.
+
+.PARAMETER Destination
+Destination of the archive to create or to add the file and folders to.
+
+.PARAMETER Compression
+Specify the type of compression to use for the archive: auto, bzip2, xz, lzma, gzip.
+By default, the compression is set to 'auto' where the tar command will try to discover what
+to use based on the file's extension.
+
+.PARAMETER Exclude
+Array of Patterns used to exclude any file matching any of those patterns.
+
+.PARAMETER FollowSymLinks
+Follow symlinks to archive the files they refer to.
+
+.PARAMETER Force
+Force create the Destination folder if it does not exist.
+
+.EXAMPLE
+Compress-nxArchive -Path .\home -Destination ./bkp/homedirs.bzip
+
+.NOTES
+If you use the -Verbose parameter, you can see what command is invoked and its parameters.
+#>
+
 function Compress-nxArchive
 {
     [CmdletBinding(SupportsShouldProcess = $true)]

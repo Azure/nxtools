@@ -23,7 +23,7 @@ class nxLocalGroup
             $this.GroupName = $Matches.groupname
             $this.Password  = $Matches.pwd
             $this.GroupId   = [int]::Parse($Matches.gid)
-            $this.GroupMember = $Matches.members -split ','
+            $this.GroupMember = ($Matches.members -split ',').Where({-not [string]::IsNullOrEmpty($_)})
         }
     }
 

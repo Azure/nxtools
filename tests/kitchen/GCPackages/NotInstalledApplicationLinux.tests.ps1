@@ -2,7 +2,7 @@ BeforeAll {
     $ProgressPreference = 'SilentlyContinue'
     $ErrorActionPreference = 'Continue'
     $ModulePath = (Join-Path -Path '/tmp/verifier' -ChildPath 'modules')
-    $packageZipPath = Join-Path -Path $ModulePath -ChildPath 'GCPolicyPackages/NotInstalledApplicationLinux*.zip'
+    $packageZipPath = Join-Path -Path $ModulePath -ChildPath 'GCPackages/NotInstalledApplicationLinux*.zip'
     $packageZip = Get-Item -Path $packageZipPath -errorAction SilentlyContinue
 }
 Describe 'Test NotInstalledApplicationLinux Audit Package' {
@@ -10,14 +10,13 @@ Describe 'Test NotInstalledApplicationLinux Audit Package' {
 
         Test-Path -Path $packageZip | Should -be $true -because (gci (split-path -parent $packageZipPath))
         { Import-Module -Name GuestConfiguration -ErrorAction Stop } | Should -not -Throw
-        { Install-GuestConfigurationAgent -ErrorAction Stop -Force } | Should -not -Throw
-        { Install-GuestConfigurationPackage -Force -Path $packageZip } | Should -not -Throw
+        Test-Path -Path $packageZip | Should -be $true
     }
 
     it 'Gets the NotInstalledApplicationLinux ''somethingNotInstalled'' Package Compliance Status (with params)' {
 
         $result = $null
-        $result = Get-GuestConfigurationPackageComplianceStatus -Package $packageZip -Parameter @{
+        $result = Get-GuestConfigurationPackageComplianceStatus -Path $packageZip -Parameter @{
             ResourceType = "GC_NotInstalledApplicationLinux"
             ResourceId = "NotInstalledApplicationLinux"
             ResourcePropertyName =  "AttributesYmlContent"
@@ -28,14 +27,14 @@ Describe 'Test NotInstalledApplicationLinux Audit Package' {
         $result.complianceStatus | Should -be $true
     }
 
-    it 'Gets the non-compliant NotInstalledApplicationLinux @(''powershell-preview'',''somethingNotInstalled'') Package Compliance Status (with params)' {
+    it 'Gets the non-compliant NotInstalledApplicationLinux @(''powershell'',''somethingNotInstalled'') Package Compliance Status (with params)' {
 
         $result = $null
-        $result = Get-GuestConfigurationPackageComplianceStatus -Package $packageZip -Parameter @{
+        $result = Get-GuestConfigurationPackageComplianceStatus -Path $packageZip -Parameter @{
             ResourceType = "GC_NotInstalledApplicationLinux"
             ResourceId = "NotInstalledApplicationLinux"
             ResourcePropertyName =  "AttributesYmlContent"
-            ResourcePropertyValue = "powershell-preview;somethingNotInstalled"
+            ResourcePropertyValue = "powershell;somethingNotInstalled"
         }
 
         $result.Resources.Reasons | Should -not -BeNullOrEmpty

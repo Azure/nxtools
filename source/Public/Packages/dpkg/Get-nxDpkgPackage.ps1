@@ -36,7 +36,7 @@ function Get-nxDpkgPackage
             else
             {
                 # dpkg --status packageName for having details of the installed package
-                $dpkgParams = @('--status',$_.Name)
+                $dpkgParams = @('--status', $_.Name)
             }
 
             Write-Verbose "Fetching details for '$($_.Name)'"
