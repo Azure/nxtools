@@ -96,7 +96,7 @@
             ProjectUri   = 'https://github.com/SynEdgy/nxtools/'
 
             # A URL to an icon representing this module.
-            IconUri      = 'https://raw.githubusercontent.com/SynEdgy/nxtools/main/source/assets/pstux.png'
+            IconUri      = ''
 
             # ReleaseNotes of this module
             ReleaseNotes = ''
