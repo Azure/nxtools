@@ -22,13 +22,12 @@ variables:
   ENABLE_PRS_DELAYSIGN: 1
   ROOT: $(Build.SourcesDirectory)
   REPOROOT: $(Build.SourcesDirectory)
-  OUTPUTROOT: $(REPOROOT)\out
-  NUGET_XMLDOC_MODE: none
-
-  WindowsContainerImage: 'cdpxwin1809.azurecr.io/global/vse2019:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
+  OUTPUTROOT: $(REPOROOT)/output
+  NUGET_XMLDOC_MODE: 
+  LinuxContainerImage: 'onebranch.azurecr.io/linux/ubuntu-1804:latest'
 
 resources:
-  repositories: 
+  repositories:
     - repository: templates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
@@ -37,13 +36,15 @@ resources:
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@templates # https://aka.ms/obpipelines/templates
   parameters:
+    featureFlags:
+      linuxEsrpSigningPreview: true
     cloudvault: # https://aka.ms/obpipelines/cloudvault
       enabled: false
     globalSdl: # https://aka.ms/obpipelines/sdl
       tsa:
         enabled: false # onebranch publish all sdl results to TSA. If TSA is disabled all SDL tools will forced into 'break' build mode.
       # credscan:
-      #   suppressionsFile: $(Build.SourcesDirectory)\.config\CredScanSuppressions.json
+      #   suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
       binskim:
         break: true # always break the build on binskim issues in addition to TSA upload
       policheck:
@@ -56,90 +57,197 @@ extends:
       jobs:
       - job: main
         pool:
-          type: windows  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
-        
+          type: linux  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
+
         variables:
-          ob_outputDirectory: '$(REPOROOT)\out' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
+          ob_outputDirectory: '$(REPOROOT)/output' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
           ob_sdl_binskim_break: true # https://aka.ms/obpipelines/sdl
           ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}: # conditionally enable symbolsPublishing for master branch only
             ob_symbolsPublishing_enabled: true # https://aka.ms/obpipelines/symbols
-          
+
           # ob_sdl_suppression_suppressionFile: $(Build.SourcesDirectory)\.gdn\build.official.gdnsuppress
-
         steps:
-          - task: UseDotNet@2
-            continueOnError: true
-            inputs:
-              packageType: 'sdk'
-              useGlobalJson: true
-              performMultiLevelLookup: true
+          # - task: DownloadBuildArtifacts@1
+          #   inputs:
+          #     buildType: 'specific'
+          #     project: 'b32aa71e-8ed2-41b2-9d77-5bc261222004'
+          #     pipeline: '254966'
+          #     buildVersionToDownload: 'latest'
+          #     downloadType: 'single'
+          #     artifactName: 'drop_linux_build_multibuild'
+          #     downloadPath: '$(Build.SourcesDirectory)/output'
 
-          - task: onebranch.pipeline.version@1 # generates automatic version. For other versioning options check https://aka.ms/obpipelines/versioning
-            displayName: 'Setup BuildNumber'
+          - task: Bash@3
+            displayName: 'Initial set up for Ubuntu 16'
             inputs:
-              system: 'RevisionCounter'
-              major: '1'
-              minor: '0'
-              exclude_commit: true
+              targetType: 'inline'
+              script: |
+                echo "apt-get update && apt-get install -y sudo"
+                apt-get update && apt-get install -y sudo;
+                echo "sudo apt-get update"
+                sudo apt-get update
+                echo "Install pre-requisite packages."
+                sudo apt-get install -y wget apt-transport-https software-properties-common
+                echo "Download the Microsoft repository GPG keys"
+                wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+                echo "Register the Microsoft repository GPG keys"
+                sudo dpkg -i packages-microsoft-prod.deb
+                echo "Update the list of packages after we added packages.microsoft.com"
+                sudo apt-get update
+                echo "Install PowerShell"
+                sudo apt-get install -y powershell
+                # echo "Copy GC agent"
+                # mkdir -p '$(Build.SourcesDirectory)/source/gc_agents'
+                # sudo find $(Build.SourcesDirectory) -type f -name GC.zip | tee '$(Build.SourcesDirectory)/source/gc_agents/DSC_Linux.zip'
+                # sudo find $(Build.SourcesDirectory) -type f -name InGuestPolicyPackagex64.zip | tee '$(Build.SourcesDirectory)/source/gc_agents/DSC_Windows.zip'
 
-          - task: MSBuild@1
+          - pwsh: |
+              dotnet tool install --global GitVersion.Tool
+              $gitVersionObject = dotnet-gitversion | ConvertFrom-Json
+              $gitVersionObject.psobject.properties.Foreach{
+                  Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
+                  Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
+              }
+              Write-Host -Object "##vso[build.updatebuildnumber]$($gitVersionObject.FullSemVer)"
+            displayName: Calculate ModuleVersion (GitVersion)
+            name: gitVersion
+
+          - task: PowerShell@2
+            enabled: true
+            displayName: Enable PSSubsystemPluginModel
             inputs:
-              solution: '$(Build.SourcesDirectory)\dirs.proj'
-              msbuildLocationMethod: 'location'
-              msbuildLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe'
-              platform: 'x64'
-              configuration: 'release'
-              msbuildArguments: '/t:Restore'
-              clean: true
-              maximumCpuCount: true
-              logProjectEvents: true
-              createLogFile: true
+              pwsh: true
+              targetType: inline
+              continueOnError: true
+              script: |
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
-          - task: MSBuild@1
+          - task: PowerShell@2
+            name: package
+            displayName: 'Build & Package Module'
             inputs:
-              solution: '$(Build.SourcesDirectory)\dirs.proj'
-              msbuildLocationMethod: 'location'
-              msbuildLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe'
-              platform: 'x64'
-              configuration: 'release'
-              msbuildArguments: '/v:n /nr:false /flp1:Verbosity=d;LogFile=$(OUTPUTROOT)\logs\msbuild_x64_release.log;Encoding=UTF-8 /flp2:logfile=$(OUTPUTROOT)\logs\msbuild_x64_release.err;errorsonly /bl:$(OUTPUTROOT)\logs\msbuild_x64_release.binlog'
-              clean: true
-              maximumCpuCount: true
-              logProjectEvents: true
-              createLogFile: true
+              pwsh: true
+              targetType: inline
+              continueOnError: true
+              script: |
+                pwsh -c {
+                  ./build.ps1 -Tasks noop -ResolveDependency
+                  Import-Module GuestConfiguration
+                }
 
-          - task: onebranch.pipeline.signing@1 # https://aka.ms/obpipelines/signing
+                pwsh -c {
+                  Import-Module -Name PSDesiredStateConfiguration -PassThru
+                  ./build.ps1 -tasks gcpol
+                }
+            env:
+              ModuleVersion: $(NuGetVersionV2)
+
+          - task: PowerShell@2
+            name: package
+            displayName: 'Build & Package Module'
+            inputs:
+              filePath: './build.ps1'
+              arguments: '-ResolveDependency -tasks gcpol'
+              pwsh: true
+
+          - task: PowerShell@2
+            name: test
+            displayName: 'Run HQRM Test'
+            inputs:
+              pwsh: true
+              targetType: inline
+              script: |
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
+
+                pwsh -c {
+                  Import-Module -Name PSDesiredStateConfiguration -PassThru
+                  ./build.ps1 -tasks hqrmtest
+                }
+          
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results'
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: 'NUnit'
+              testResultsFiles: 'output/testResults/NUnit*.xml'
+              testRunTitle: 'HQRM'
+
+          - task: onebranch.pipeline.signing@1
             displayName: 'Sign output'
             inputs:
               command: 'sign'
               signing_environment: 'azure-ado'
-              files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1'
-              search_root: '$(Build.SourcesDirectory)\out'
+              signing_profile: 'external_distribution'
+              files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1;**/*.psd1;**/*.ps1xml'
+              search_root: '$(OUTPUTROOT)/'
 
-          - task: VSTest@2
-            inputs:
-              testSelector: 'testAssemblies'
-              testAssemblyVer2: |
-                **\*test*.dll
-                !**\*TestAdapter.dll
-                !**\obj\**
-              searchFolder: '$(Build.SourcesDirectory)\out'
-              resultsFolder: '$(Build.SourcesDirectory)\out\logs\TestResults'
-              runInParallel: true
-              codeCoverageEnabled: true
-              testRunTitle: 'release_x64'
-              platform: 'x64'
-              configuration: 'release'
-              publishRunAttachments: false
-              failOnMinTestsNotRun: true
-              rerunFailedTests: true
+          # - task: UseDotNet@2
+          #   continueOnError: true
+          #   inputs:
+          #     packageType: 'sdk'
+          #     useGlobalJson: true
+          #     performMultiLevelLookup: true
 
-          - task: PublishTestResults@2
-            displayName: 'Publish test results'
-            inputs:
-              testResultsFormat: VSTest
-              testResultsFiles: '$(Build.SourcesDirectory)\out\logs\TestResults\**\*.trx'
-              failTaskOnFailedTests: true
+          # - task: onebranch.pipeline.version@1 # generates automatic version. For other versioning options check https://aka.ms/obpipelines/versioning
+          #   displayName: 'Setup BuildNumber'
+          #   inputs:
+          #     system: 'RevisionCounter'
+          #     major: '1'
+          #     minor: '0'
+          #     exclude_commit: true
+
+          # - task: MSBuild@1
+          #   inputs:
+          #     solution: '$(Build.SourcesDirectory)\dirs.proj'
+          #     msbuildLocationMethod: 'location'
+          #     msbuildLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe'
+          #     platform: 'x64'
+          #     configuration: 'release'
+          #     msbuildArguments: '/t:Restore'
+          #     clean: true
+          #     maximumCpuCount: true
+          #     logProjectEvents: true
+
+          # - task: MSBuild@1
+          #   inputs:
+          #     solution: '$(Build.SourcesDirectory)\dirs.proj'
+          #     msbuildLocationMethod: 'location'
+          #     msbuildLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe'
+          #     platform: 'x64'
+          #     configuration: 'release'
+          #     msbuildArguments: '/v:n /nr:false /flp1:Verbosity=d;LogFile=$(OUTPUTROOT)\logs\msbuild_x64_release.log;Encoding=UTF-8 /flp2:logfile=$(OUTPUTROOT)\logs\msbuild_x64_release.err;errorsonly /bl:$(OUTPUTROOT)\logs\msbuild_x64_release.binlog'
+          #     clean: true
+          #     maximumCpuCount: true
+          #     logProjectEvents: true
+
+          # - task: VSTest@2
+          #   inputs:
+          #     testSelector: 'testAssemblies'
+          #     testAssemblyVer2: |
+          #       **\*test*.dll
+          #       !**\*TestAdapter.dll
+          #       !**\obj\**
+          #     searchFolder: '$(Build.SourcesDirectory)\out'
+          #     resultsFolder: '$(Build.SourcesDirectory)\out\logs\TestResults'
+          #     runInParallel: true
+          #     codeCoverageEnabled: true
+          #     testRunTitle: 'release_x64'
+          #     platform: 'x64'
+          #     configuration: 'release'
+          #     publishRunAttachments: false
+          #     failOnMinTestsNotRun: true
+          #     rerunFailedTests: true
+
+          # - task: PublishTestResults@2
+          #   displayName: 'Publish test results'
+          #   inputs:
+          #     testResultsFormat: VSTest
+          #     testResultsFiles: '$(Build.SourcesDirectory)\out\logs\TestResults\**\*.trx'
+          #     failTaskOnFailedTests: true
 
 # https://aka.ms/obpipelines/cloudtest
 # uncomment this section and edit parameters to enable CloudTest
