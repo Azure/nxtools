@@ -7,12 +7,10 @@ Stackoverflow: URL
 Tags: comma,separated,list,of,tags
 ---
 
-# nxtools [![Azure DevOps builds](https://img.shields.io/azure-devops/build/Synedgy/nxtools/10)](https://synedgy.visualstudio.com/nxtools/_build?definitionId=10&_a=summary)
+# nxtools 
 
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/nxtools?label=nxtools%20Preview)](https://www.powershellgallery.com/packages/nxtools/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/nxtools?label=nxtools)](https://www.powershellgallery.com/packages/nxtools/)
-[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/SynEdgy/nxtools/10)](https://synedgy.visualstudio.com/nxtools/_test/analytics?definitionId=10&contextType=build)
-![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/Synedgy/nxtools/10)
 ![PowerShell Gallery](https://img.shields.io/powershellgallery/p/nxtools)
 
 
