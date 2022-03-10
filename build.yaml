@@ -57,11 +57,12 @@ BuildWorkflow:
 
   cleanUnzippedGCPackages: |
     {
-      Get-ChildItem 'output\GCPolicyPackages\' -Directory | Remove-Item -Recurse -Force
+      Get-ChildItem 'output\GCPackages\' -Directory | Remove-Item -Recurse -Force
     }
 
   pack:
     - build
+    - gcpack
     - package_module_nupkg
 
   hqrmtest:
@@ -78,7 +79,7 @@ BuildWorkflow:
   publish:
     - publish_module_to_gallery
     - Publish_Release_To_GitHub
-    # - Publish_GitHub_Wiki_Content
+    - Publish_GitHub_Wiki_Content
     - Create_ChangeLog_GitHub_PR
 
 ####################################################
@@ -91,6 +92,7 @@ DscTest:
         Tag:
         ExcludeTag:
           - Common Tests - New Error-Level Script Analyzer Rules
+          # - Common Tests - Validate Example Files
       Output:
         Verbosity: Detailed
   Script:
@@ -147,8 +149,17 @@ ModuleBuildTasks:
 GitHubConfig:
   GitHubFilesToAdd:
     - 'CHANGELOG.md'
-  GitHubConfigUserName: gaelcolas
-  GitHubConfigUserEmail: psgallery@synedgy.com
+  ReleaseAssets:
+    - output/GCPackages/InstalledApplicationLinux*.zip
+    - output/GCPackages/LinuxGroupsMustExclude*.zip
+    - output/GCPackages/LinuxGroupsMustInclude*.zip
+    - output/GCPackages/No90CloudInitUserAllowdNoPasswdInSudoers*.zip
+    - output/GCPackages/NotInstalledApplicationLinux*.zip
+    - output/GCPackages/PasswordPolicy_msid110*.zip
+    - output/GCPackages/PasswordPolicy_msid121*.zip
+    - output/GCPackages/PasswordPolicy_msid232*.zip
+  GitHubConfigUserName: NA
+  GitHubConfigUserEmail: NA@microsoft.com
   UpdateChangelogOnPrerelease: false
 
 ####################################################

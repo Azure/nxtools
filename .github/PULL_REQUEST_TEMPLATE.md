@@ -2,12 +2,7 @@
     Thanks for submitting a Pull Request (PR) to this project. Your contribution to this project
     is greatly appreciated!
 
-    Please prefix the PR title with the resource name, e.g. 'ResourceName: My short description'.
-    If this is a breaking change, then also prefix the PR title with 'BREAKING CHANGE:',
-    e.g. 'BREAKING CHANGE: ResourceName: My short description'.
-
-    You may remove this comment block, and the other comment blocks, but please keep the headers
-    and the task list.
+    Have you checked the [CONTRIBUTING](CONTRIBUTING.md) document?
 -->
 
 #### Pull Request (PR) description
@@ -42,8 +37,6 @@
       Entry should say what was changed and how that affects users (if applicable), and
       reference the issue being resolved (if applicable).
 - [ ] Resource documentation added/updated in README.md.
-- [ ] Resource parameter descriptions added/updated in README.md, schema.mof and comment-based
-      help.
 - [ ] Comment-based help added/updated.
 - [ ] Localization strings added/updated in all localization files as appropriate.
 - [ ] Examples appropriately added/updated.

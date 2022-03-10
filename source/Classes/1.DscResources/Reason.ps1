@@ -2,8 +2,8 @@
 class Reason
 {
     [DscProperty()]
-    [string] $Phrase
+    [string] $Code
 
     [DscProperty()]
-    [string] $Code
+    [string] $Phrase
 }

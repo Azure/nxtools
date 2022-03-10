@@ -16,7 +16,7 @@ function Get-nxYumPackage
         if ($PSBoundParameters.ContainsKey('Name'))
         {
             $getNxYumPackageInstalledParams['Name'] = $Name
-            ErrorAction = 'Ignore'
+            $getNxYumPackageInstalledParams['ErrorAction'] = 'Ignore'
         }
 
         Get-nxYumPackageInstalled @getNxYumPackageInstalledParams | ForEach-Object -Process {

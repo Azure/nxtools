@@ -1,14 +1,16 @@
-#!/usr/bin/env pwsh-preview
+#!/usr/bin/env pwsh
+
+
+$ProgressPreference = 'SilentlyContinue'
+
 if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted')
 {
     Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 }
 
-Install-Module -Name PSDesiredStateConfiguration -Confirm:$false
+Install-Module -Name PSDesiredStateConfiguration -RequiredVersion 2.0.5 -Confirm:$false
 Import-Module -Name PSDesiredStateConfiguration -PassThru
-Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource
+Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -Confirm:$false
 
 Install-Module -Name GuestConfiguration -AllowPrerelease
 Import-Module -Name GuestConfiguration
-Enable-ExperimentalFeature -Name GuestConfiguration.Pester
-Enable-ExperimentalFeature -Name GuestConfiguration.SetScenario
