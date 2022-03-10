@@ -23,7 +23,7 @@ variables:
   ROOT: $(Build.SourcesDirectory)
   REPOROOT: $(Build.SourcesDirectory)
   OUTPUTROOT: $(REPOROOT)/output
-  NUGET_XMLDOC_MODE: 
+  NUGET_XMLDOC_MODE:
   LinuxContainerImage: 'onebranch.azurecr.io/linux/ubuntu-1804:latest'
 
 resources:
@@ -145,14 +145,6 @@ extends:
               ModuleVersion: $(NuGetVersionV2)
 
           - task: PowerShell@2
-            name: package
-            displayName: 'Build & Package Module'
-            inputs:
-              filePath: './build.ps1'
-              arguments: '-ResolveDependency -tasks gcpol'
-              pwsh: true
-
-          - task: PowerShell@2
             name: test
             displayName: 'Run HQRM Test'
             inputs:
@@ -167,7 +159,7 @@ extends:
                   Import-Module -Name PSDesiredStateConfiguration -PassThru
                   ./build.ps1 -tasks hqrmtest
                 }
-          
+
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
             condition: succeededOrFailed()
