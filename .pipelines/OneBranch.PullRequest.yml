@@ -57,7 +57,7 @@ extends:
           type: linux  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
 
         variables: # More settings at https://aka.ms/obpipelines/yaml/jobs
-          ob_outputDirectory: '$(REPOROOT)\out' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
+          ob_outputDirectory: '$(REPOROOT)\output' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
           ob_sdl_binskim_break: true # https://aka.ms/obpipelines/sdl
 
           # ob_sdl_suppression_suppressionFile: $(Build.SourcesDirectory)\.gdn\build.nonofficial.gdnsuppress
@@ -74,6 +74,8 @@ extends:
           - pwsh: |
               dotnet tool install --global GitVersion.Tool
               # ::set-env name=PATH::${PATH}:${HOME}/.dotnet/tools
+              $gitVersionStr = &'~/.dotnet/tools/dotnet-gitversion'
+              Write-Host -Object "JSON: $gitVersionStr."
               $gitVersionObject = &'~/.dotnet/tools/dotnet-gitversion' | ConvertFrom-Json
               $gitVersionObject.psobject.properties.Foreach{
                   Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
