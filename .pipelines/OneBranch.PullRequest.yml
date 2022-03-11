@@ -71,13 +71,15 @@ extends:
               performMultiLevelLookup: true
 
           - pwsh: |
-              dotnet tool install --global GitVersion.Tool
+              pwsh {
+                dotnet tool install --global GitVersion.Tool
+              }
             displayName: Install dotnet-gitversion
             name: gitVersionInstall
 
           # Need to run dotnet-gitversion in new session.
           - pwsh: |
-              $gitVersionObject = dotnet-gitversion | ConvertFrom-Json
+              $gitVersionObject = &'~/bin/dotnet-gitversion' | ConvertFrom-Json
               $gitVersionObject.psobject.properties.Foreach{
                   Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
                   Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
