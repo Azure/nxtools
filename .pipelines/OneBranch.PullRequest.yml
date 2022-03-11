@@ -54,7 +54,7 @@ extends:
       jobs:
       - job: main
         pool:
-          type: windows  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
+          type: linux  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
 
         variables: # More settings at https://aka.ms/obpipelines/yaml/jobs
           ob_outputDirectory: '$(REPOROOT)\out' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
