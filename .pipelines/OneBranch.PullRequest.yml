@@ -73,7 +73,8 @@ extends:
           # Need to run dotnet-gitversion in new session.
           - pwsh: |
               dotnet tool install --global GitVersion.Tool
-              $gitVersionObject = &'~/bin/dotnet-gitversion' | ConvertFrom-Json
+              # ::set-env name=PATH::${PATH}:${HOME}/.dotnet/tools
+              $gitVersionObject = &'~/.dotnet/tools/dotnet-gitversion' | ConvertFrom-Json
               $gitVersionObject.psobject.properties.Foreach{
                   Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
                   Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
