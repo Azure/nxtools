@@ -35,6 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed the issue on centos/red hat where the MODE contains a trailing `.`.
 
+### Changed
+
+- Setting up official pipeline.
+
 ## [0.2.0] - 2021-05-25
 
 ### Added
