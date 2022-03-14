@@ -71,19 +71,19 @@ extends:
               performMultiLevelLookup: true
 
           # Need to run dotnet-gitversion in new session.
-          - pwsh: |
-              dotnet tool install --global GitVersion.Tool
-              # ::set-env name=PATH::${PATH}:${HOME}/.dotnet/tools
-              $gitVersionStr = &'~/.dotnet/tools/dotnet-gitversion'
-              Write-Host -Object "JSON: $gitVersionStr."
-              $gitVersionObject = &'~/.dotnet/tools/dotnet-gitversion' | ConvertFrom-Json
-              $gitVersionObject.psobject.properties.Foreach{
-                  Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
-                  Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
-              }
-              Write-Host -Object "##vso[build.updatebuildnumber]$($gitVersionObject.FullSemVer)"
-            displayName: Calculate ModuleVersion (GitVersion)
-            name: gitVersion
+          # - pwsh: |
+          #     dotnet tool install --global GitVersion.Tool
+          #     # ::set-env name=PATH::${PATH}:${HOME}/.dotnet/tools
+          #     $gitVersionStr = &'~/.dotnet/tools/dotnet-gitversion'
+          #     Write-Host -Object "JSON: $gitVersionStr."
+          #     # $gitVersionObject = &'~/.dotnet/tools/dotnet-gitversion' | ConvertFrom-Json
+          #     $gitVersionObject.psobject.properties.Foreach{
+          #         Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
+          #         Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
+          #     }
+          #     Write-Host -Object "##vso[build.updatebuildnumber]$($gitVersionObject.FullSemVer)"
+          #   displayName: Calculate ModuleVersion (GitVersion)
+          #   name: gitVersion
 
           - task: PowerShell@2
             enabled: true
@@ -96,17 +96,25 @@ extends:
 
           - task: MSBuild@1
             inputs:
-              solution: '$(Build.SourcesDirectory)\dirs.proj'
-              msbuildLocationMethod: 'location'
-              msbuildLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe'
-              platform: 'x64'
-              configuration: 'release'
-              msbuildArguments: '/t:Restore'
-              clean: true
-              maximumCpuCount: true
-              logProjectEvents: true
+              pwsh: true
+              targetType: inline
+              continueOnError: true
+              script: |
+                pwsh -c {
+                  ./build.ps1 -Tasks noop -ResolveDependency
+                  Import-Module GuestConfiguration
+                }
 
-          - task: MSBuild@1
+                pwsh -c {
+                  Import-Module -Name PSDesiredStateConfiguration -PassThru
+                  ./build.ps1 -tasks gcpol
+                }
+            # env:
+            #   ModuleVersion: $(NuGetVersionV2)
+
+          - task: PowerShell@2
+            name: test
+            displayName: 'Run HQRM Test'
             inputs:
               solution: '$(Build.SourcesDirectory)\dirs.proj'
               msbuildLocationMethod: 'location'
