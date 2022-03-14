@@ -101,7 +101,7 @@ DscTest:
     ExcludeModuleFile:
       - Modules/DscResource.Common
       - Modules/PSNativeCmdDevKit
-    MainGitBranch: master
+    MainGitBranch: main
 ####################################################
 #       PESTER  Configuration                      #
 ####################################################
