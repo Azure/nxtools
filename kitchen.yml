@@ -1,0 +1,163 @@
+---
+# Check this doc: https://github.com/test-kitchen/kitchen-azurerm
+# you may set the following environment variables:
+# AZURE_CLIENT_ID="your-azure-client-id-here"
+# AZURE_CLIENT_SECRET="your-client-secret-here"
+# AZURE_TENANT_ID="your-azure-tenant-id-here"
+# (check doc https://github.com/test-kitchen/kitchen-azurerm for more details)
+
+driver:
+  name: azurerm
+  subscription_id: <%= ENV['AZ_SUBSCRIPTION_ID'] %>
+  location: 'westus2'
+  machine_size: 'Standard_D2s_v3'
+  username: azure
+  password: <%=
+    require "securerandom"
+    if File.exists?("./.kitchen/pwd.txt")
+      ENV['MACHINE_PASS'] = File.read("./.kitchen/pwd.txt")
+    else
+      ENV['MACHINE_PASS'] = SecureRandom.base64(24)
+      File.open("./.kitchen/pwd.txt", "w") { |f| f.write ENV['MACHINE_PASS'] }
+    end
+    ENV['MACHINE_PASS']
+   %>
+
+provisioner:
+  name: shell # defaults to bash on linux, so the shebang is important!
+  script: 'tests/kitchen/provisioning.ps1'
+
+verifier:
+  sudo: true
+  shell: pwsh
+  name: pester
+  test_folder: ./tests/kitchen/
+  copy_folders:
+    - output/module/nxtools
+  downloads:
+    "./PesterTestResults.xml": "./output/testResults/"
+    # kitchen_cmd.ps1: "./output/testResults/"
+  #   ./coverage.xml: "./output/testResults/"
+  #   # : ./testresults
+
+
+  # pester_install:
+  #   MaximumVersion: '4.99.999'
+
+platforms:
+  - name: ubuntu-18.04
+    driver:
+      image_urn: Canonical:UbuntuServer:18.04-LTS:latest
+    lifecycle:
+      post_create:
+      - remote: |
+          sudo apt-get update
+          # Install pre-requisite packages.
+          sudo apt-get install -y wget apt-transport-https software-properties-common
+          # Download the Microsoft repository GPG keys
+          wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+          # Register the Microsoft repository GPG keys
+          sudo dpkg -i packages-microsoft-prod.deb
+          # Update the list of packages after we added packages.microsoft.com
+          sudo apt-get update
+          # Install PowerShell
+          sudo apt-get install -y powershell
+          sudo apt-get install -y tree
+          sudo pwsh -c "enable-ExperimentalFeature -Name PSSubsystemPluginModel"
+          # Check the provisioning ps1 to see what may be running next...
+
+  - name: centos-7.5
+    driver:
+      image_urn: OpenLogic:CentOS:7.5:latest
+      username: azure
+      password: <%=
+          require "securerandom"
+          if File.exists?("./.kitchen/pwd.txt")
+            ENV['MACHINE_PASS'] = File.read("./.kitchen/pwd.txt")
+          else
+            ENV['MACHINE_PASS'] = SecureRandom.base64(24)
+            File.open("./.kitchen/pwd.txt", "w") { |f| f.write ENV['MACHINE_PASS'] }
+          end
+          ENV['MACHINE_PASS']
+        %>
+    lifecycle:
+      post_create:
+      - remote: echo "<%= ENV['MACHINE_PASS'] %>" | sudo -S chmod +x /etc/sudoers.d
+      - remote: "echo \"<%= ENV['MACHINE_PASS'] %>\" | sudo -S sh -c \"chmod +x /etc/sudoers.d && echo 'azure ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/waagent\""
+      - remote: |
+          # Register the Microsoft RedHat repository
+          curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo
+          # Install PowerShell
+          sudo yum install -y powershell
+          # Start PowerShell to enable exp feature
+          sudo pwsh -c "enable-ExperimentalFeature -Name PSSubsystemPluginModel"
+
+  - name: debian-10
+    driver:
+      image_urn: Debian:Debian-10:10:latest
+      username: azure
+      password: <%=
+          require "securerandom"
+          if File.exists?("./.kitchen/pwd.txt")
+            ENV['MACHINE_PASS'] = File.read("./.kitchen/pwd.txt")
+          else
+            ENV['MACHINE_PASS'] = SecureRandom.base64(24)
+            File.open("./.kitchen/pwd.txt", "w") { |f| f.write ENV['MACHINE_PASS'] }
+          end
+          ENV['MACHINE_PASS']
+        %>
+    lifecycle:
+      post_create:
+        #- remote: echo "<%= ENV['MACHINE_PASS'] %>" | sudo -S chmod +x /etc/sudoers.d
+        # { echo 'E04hzjc4K4qYV7VeGw7V0H+rFxNM0Amo' ; echo 'hi' ; } | sudo -k -S  sed '1 s/^.*$//' | /usr/games/cowsay
+        - remote: "echo \"<%= ENV['MACHINE_PASS'] %>\" | sudo -S sh -c \"chmod +x /etc/sudoers.d && echo 'azure ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/waagent\""
+        - remote: sudo apt-get update && sudo apt-get install -y curl gnupg apt-transport-https
+        - remote: curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+        - remote: sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main" > /etc/apt/sources.list.d/microsoft.list'
+        - remote: sudo apt-get update && sudo apt-get install -y powershell
+        - remote: pwsh -c "Write-Host 'PowerShell Installed'"
+        - remote: sudo apt-get install -y lsb-release
+
+  #       # - remote: mkdir ~/.local/share/powershell
+  #       # - remote: sudo chown -r azure ~/.local/share/powershell
+  #       #- sudo apt-get install -y cowsay
+  #     pre_destroy:
+  #       - local: pwsh -c " rm ./.kitchen/pwd.txt"
+
+  # - name: win2019
+  #   driver:
+  #     image_urn: MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest
+  #   verifier:
+  #     bootstrap: # installs modules from nuget feed by download and unzip.
+  #       repository_url: "https://www.powershellgallery.com/api/v2"
+  #       modules:
+  #         - PackageManagement
+  #         - Name: PowerShellGet
+  #           Version: '2.2.4.1'
+
+  # - name: win2012r2
+  #   driver:
+  #     image_urn: MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter:latest
+  #   verifier:
+  #     bootstrap: # installs modules from nuget feed by download and unzip.
+  #       repository_url: "https://www.powershellgallery.com/api/v2"
+  #       modules:
+  #         - PackageManagement
+  #         - Name: PowerShellGet
+  #           Version: '2.2.4.1'
+
+suites:
+  - name: GCPackages
+    verifier:
+      copy_folders:
+        - output/GCPackages/
+        - output/module/nxtools # This is only used when troubleshooting interactively.
+        - output/RequiredModules/PSNativeCmdDevKit # used to test some parsing on the VMs
+      install_modules:
+        - Name: GuestConfiguration
+          AllowPrerelease: true
+  - name: Functions
+    verifier:
+      copy_folders:
+        - output/module/nxtools
+        - output/RequiredModules/PSNativeCmdDevKit # used to test some parsing on the VMs
