@@ -63,12 +63,6 @@ extends:
           # ob_sdl_suppression_suppressionFile: $(Build.SourcesDirectory)\.gdn\build.nonofficial.gdnsuppress
 
         steps:
-          - task: UseDotNet@2
-            continueOnError: true
-            inputs:
-              packageType: 'sdk'
-              useGlobalJson: true
-              performMultiLevelLookup: true
 
           # Need to run dotnet-gitversion in new session.
           # - pwsh: |
@@ -85,14 +79,18 @@ extends:
           #   displayName: Calculate ModuleVersion (GitVersion)
           #   name: gitVersion
 
+
           - task: PowerShell@2
             enabled: true
             displayName: Enable PSSubsystemPluginModel
             inputs:
-              system: 'RevisionCounter'
-              major: '1'
-              minor: '0'
-              exclude_commit: true
+              pwsh: true
+              targetType: inline
+              continueOnError: true
+              script: |
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
           - task: MSBuild@1
             inputs:
@@ -116,33 +114,17 @@ extends:
             name: test
             displayName: 'Run HQRM Test'
             inputs:
-              solution: '$(Build.SourcesDirectory)\dirs.proj'
-              msbuildLocationMethod: 'location'
-              msbuildLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe'
-              platform: 'x64'
-              configuration: 'release'
-              msbuildArguments: '/v:n /nr:false /flp1:Verbosity=d;LogFile=$(OUTPUTROOT)\logs\msbuild_x64_release.log;Encoding=UTF-8 /flp2:logfile=$(OUTPUTROOT)\logs\msbuild_x64_release.err;errorsonly /bl:$(OUTPUTROOT)\logs\msbuild_x64_release.binlog'
-              clean: true
-              maximumCpuCount: true
-              logProjectEvents: true
+              pwsh: true
+              targetType: inline
+              script: |
+                pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
-          - task: VSTest@2
-            inputs:
-              testSelector: 'testAssemblies'
-              testAssemblyVer2: |
-                **\*test*.dll
-                !**\*TestAdapter.dll
-                !**\obj\**
-              searchFolder: '$(Build.SourcesDirectory)\out'
-              resultsFolder: '$(Build.SourcesDirectory)\out\logs\TestResults'
-              runInParallel: true
-              codeCoverageEnabled: true
-              testRunTitle: 'release_x64'
-              platform: 'x64'
-              configuration: 'release'
-              publishRunAttachments: false
-              failOnMinTestsNotRun: true
-              rerunFailedTests: true
+                pwsh -c {
+                  Import-Module -Name PSDesiredStateConfiguration -PassThru
+                  ./build.ps1 -tasks hqrmtest
+                }
 
           - task: PublishTestResults@2
             displayName: 'Publish test results'
