@@ -101,16 +101,16 @@ extends:
                 # sudo find $(Build.SourcesDirectory) -type f -name GC.zip | tee '$(Build.SourcesDirectory)/source/gc_agents/DSC_Linux.zip'
                 # sudo find $(Build.SourcesDirectory) -type f -name InGuestPolicyPackagex64.zip | tee '$(Build.SourcesDirectory)/source/gc_agents/DSC_Windows.zip'
 
-          - pwsh: |
-              dotnet tool install --global GitVersion.Tool
-              $gitVersionObject = dotnet-gitversion | ConvertFrom-Json
-              $gitVersionObject.psobject.properties.Foreach{
-                  Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
-                  Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
-              }
-              Write-Host -Object "##vso[build.updatebuildnumber]$($gitVersionObject.FullSemVer)"
-            displayName: Calculate ModuleVersion (GitVersion)
-            name: gitVersion
+          # - pwsh: |
+          #     dotnet tool install --global GitVersion.Tool
+          #     $gitVersionObject = dotnet-gitversion | ConvertFrom-Json
+          #     $gitVersionObject.psobject.properties.Foreach{
+          #         Write-Host -Object "Setting Task Variable '$($_.Name)' with value '$($_.Value)'."
+          #         Write-Host -Object "##vso[task.setvariable variable=$($_.Name);]$($_.Value)"
+          #     }
+          #     Write-Host -Object "##vso[build.updatebuildnumber]$($gitVersionObject.FullSemVer)"
+          #   displayName: Calculate ModuleVersion (GitVersion)
+          #   name: gitVersion
 
           - task: PowerShell@2
             enabled: true
