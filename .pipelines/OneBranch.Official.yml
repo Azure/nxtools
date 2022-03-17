@@ -141,8 +141,6 @@ extends:
                   Import-Module -Name PSDesiredStateConfiguration -PassThru
                   ./build.ps1 -tasks gcpol
                 }
-            env:
-              ModuleVersion: $(NuGetVersionV2)
 
           - task: PowerShell@2
             name: test

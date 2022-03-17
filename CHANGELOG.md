@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed the issue on centos/red hat where the MODE contains a trailing `.`.
+- Relying on ModuleVersion from Module manifest.
 
 ### Changed
 
