@@ -173,7 +173,7 @@ extends:
               signing_environment: 'azure-ado'
               signing_profile: 'external_distribution'
               files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1;**/*.psd1;**/*.ps1xml'
-              search_root: '$(OUTPUTROOT)/'
+              search_root: '$(OUTPUTROOT)/module/'
 
           # - task: UseDotNet@2
           #   continueOnError: true
