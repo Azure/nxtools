@@ -40,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Setting up official pipeline.
 
+### Removed
+
+- Disabling changelog tests because of the way the private repo fetches and errors on the `git diff`.
+
 ## [0.2.0] - 2021-05-25
 
 ### Added
