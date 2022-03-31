@@ -20,7 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `Get-nxYumPackage`: Getting the installed yum/rpm package detailed info.
     - `Get-nxDpkgPackage`: Getting the installed dpkg/apt package detailed info.
 
-- Update the classes and DSC Resources
+- Added the DSC Resources classes
+    - `nxUser`
+    - `nxGroup`
+    - `nxFile`
+    - `nxArchive`
+    - `nxPackage`
+    - `nxFileLine`
+    - `nxFileContentReplace`
 
 - Added GC policy config for creating GC packages
     - InstalledApplicationLinux
