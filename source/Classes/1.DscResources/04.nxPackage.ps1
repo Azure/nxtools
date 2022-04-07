@@ -63,7 +63,7 @@ class nxPackage
             'Ensure'
             {
                 [Reason]@{
-                    Code = '{0}:{0}:Ensure' -f $this.GetType()
+                    Code = '{0}:{0}:Ensure' -f 'nxPackage'
                     Phrase ='The {0} is not in desired state because the package was expected {1} but was {2}.' -f $this.GetType(), $this.Ensure, $currentState.Ensure
                 }
             }
@@ -73,7 +73,7 @@ class nxPackage
                 if ($this.Ensure -eq [Ensure]::Present -and $currentState.Ensure -eq [Ensure]::Present)
                 {
                     [Reason]@{
-                        Code = '{0}:{0}:PackageVersion'
+                        Code = '{0}:{0}:PackageVersion' -f 'nxPackage'
                         Phrase = 'The Package {0} is present but we''re expecting version {1} and got {2}' -f $this.Name, $this.Version, $currentState.Version
                     }
                 }

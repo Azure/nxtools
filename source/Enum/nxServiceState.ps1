@@ -1,0 +1,5 @@
+enum nxServiceState
+{
+    Running
+    Stopped
+}
