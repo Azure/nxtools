@@ -138,35 +138,35 @@ class nxService
     [void] Disable()
     {
         # Disable the service
-        Write-Verbose -Message ('Disabling service ''{0}''.' -f $this.Name)
+        Write-Debug -Message ('Disabling service ''{0}''.' -f $this.Name)
         Disable-nxService -Name $this.Name -Controller $this.Controller
     }
 
     [void] Enable()
     {
         # Enable the service now or at next machine start
-        Write-Verbose -Message ('Enabling service ''{0}''.' -f $this.Name)
+        Write-Debug -Message ('Enabling service ''{0}''.' -f $this.Name)
         Enable-nxService -Name $this.Name -Controller $this.Controller
     }
 
     [void] Start()
     {
         # Start the service
-        Write-Verbose -Message ('Starting service ''{0}''.' -f $this.Name)
+        Write-Debug -Message ('Starting service ''{0}''.' -f $this.Name)
         Start-nxService -Name $this.Name -Controller $this.Controller
     }
 
     [void] Stop()
     {
         # Stop the service
-        Write-Verbose -Message ('Stopping service ''{0}''.' -f $this.Name)
+        Write-Debug -Message ('Stopping service ''{0}''.' -f $this.Name)
         Stop-nxService -Name $this.Name -Controller $this.Controller
     }
 
     [void] Restart()
     {
         # Restart the service
-        Write-Verbose -Message ('Restarting service ''{0}''.' -f $this.Name)
+        Write-Debug -Message ('Restarting service ''{0}''.' -f $this.Name)
         Restart-nxService -Name $this.Name -Controller $this.Controller
     }
 
