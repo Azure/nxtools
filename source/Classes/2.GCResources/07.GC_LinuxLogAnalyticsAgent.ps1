@@ -36,7 +36,16 @@ class GC_LinuxLogAnalyticsAgent
 
         if ($linuxApplicationResource.Test())
         {
-            $this.TestConnectionStatus()
+            if ($this.WorkspaceId -ieq "NotSpecified")
+            {
+                $this.Reasons += [Reason]@{
+                    code = 'LogAnalyticsAgent:LogAnalyticsAgent:ApplicationInstalled'
+                    phrase = 'The Log Analytics agent application is installed.'
+                }
+            }
+            else {
+                $this.TestConnectionStatus()
+            }
         }
         else
         {
@@ -60,6 +69,11 @@ class GC_LinuxLogAnalyticsAgent
         if (-not ($linuxApplicationResource.Test()))
         {
             return $false
+        }
+
+        if ($this.WorkspaceId -ieq "NotSpecified")
+        {
+            return $true
         }
 
         return $this.TestConnectionStatus()
