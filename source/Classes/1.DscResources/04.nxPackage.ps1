@@ -68,12 +68,12 @@ class nxPackage
                 }
             }
 
-            'PackageVersion'
+            'Version'
             {
                 if ($this.Ensure -eq [Ensure]::Present -and $currentState.Ensure -eq [Ensure]::Present)
                 {
                     [Reason]@{
-                        Code = '{0}:{0}:PackageVersion' -f 'nxPackage'
+                        Code = '{0}:{0}:Version' -f 'nxPackage'
                         Phrase = 'The Package {0} is present but we''re expecting version {1} and got {2}' -f $this.Name, $this.Version, $currentState.Version
                     }
                 }
