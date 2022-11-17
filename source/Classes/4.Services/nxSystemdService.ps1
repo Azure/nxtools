@@ -51,7 +51,7 @@ class nxSystemdService : nxService
                 $this.Status = $_
             }
 
-            Default
+            default
             {
                 $result = $false
                 $this.Status = $_
@@ -74,7 +74,7 @@ class nxSystemdService : nxService
                 $this.State = [nxServiceState]::Running
             }
 
-            Default
+            default
             {
                 Write-Verbose -Message ('The service ''{1}'' is ''{0}''.' -f $_, $this.Name)
                 $this.Active = $_

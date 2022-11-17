@@ -29,7 +29,7 @@
         }
     }
     'DscResource.AnalyzerRules' = 'latest'
-    xDscResourceDesigner        = 'latest'
+    # xDscResourceDesigner        = 'latest'
     'DscResource.DocGenerator'  = 'latest'
     PSNativeCmdDevKit           = 'latest'
 

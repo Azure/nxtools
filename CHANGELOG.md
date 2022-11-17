@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed the issue on centos/red hat where the MODE contains a trailing `.`.
+- Fixed HQRM style non-compliance.
+- Fixed issue with nxTools when reporting compliance but package version issue (thanks to Jan Egil Ring).
 
 ### Removed
 

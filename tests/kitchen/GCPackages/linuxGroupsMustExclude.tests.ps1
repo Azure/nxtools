@@ -5,6 +5,7 @@ BeforeAll {
     $packageZipPath = Join-Path -Path $ModulePath -ChildPath 'GCPackages/LinuxGroupsMustExclude*.zip'
     $packageZip = Get-Item -Path $packageZipPath -errorAction SilentlyContinue
 }
+
 Describe 'Test LinuxGroupsMustExclude Package' {
     it 'Package should be available' {
 
