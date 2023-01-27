@@ -236,6 +236,7 @@ This module is intended to provide guidelines / samples to help authors to creat
 If there are any questions and comments, we will try to get to them but may not be able to.
 
 ## Disclaimer
+
 We are not currently accepting PRs, but will allow them later once the functionality is available.
 
 Further, the machine configuration artifact build process is private, so the only feedback we can provide on a public PR is functional testing. We will have to do a full private integration test before merging.
@@ -248,7 +249,7 @@ The third-party tools we are using that are nested in this module are PSNativeCm
 
 ## Trademark notice
 
-Trademarks This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft’s Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party’s policies.
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft’s Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party’s policies.
 
 ## Acknowledgments
 
