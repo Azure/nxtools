@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added PS DSC module dependency and release notes to README.md, including Microsoft copyright.
 - Added KitchenCI tests for the packages on ubuntu-18.04, debian-10, and centos-7.5.
 - Added the `Functions` test suite for Kitchen-Pester.
 - Added `[nxFileLine]` and `[nxFileContentReplace]` DSC Resources to manage file content.
