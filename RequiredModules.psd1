@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 @{
     PSDependOptions             = @{
         AddToPath  = $true
@@ -6,7 +9,12 @@
             Repository = 'PSGallery'
         }
     }
-
+    PSDesiredStateConfiguration = @{
+        version = 'latest'
+        Parameters = @{
+            AllowPrerelease = $true
+        }
+    }
     InvokeBuild                 = 'latest'
     PSScriptAnalyzer            = 'latest'
     Pester                      = 'latest'
