@@ -44,6 +44,7 @@ stages:
               targetType: inline
               continueOnError: true
               script: |
+                pwsh -c '$PSVersionTable'
                 'Enabling Experimental feature.'
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
                 'Installing PSDSCv3 module'
