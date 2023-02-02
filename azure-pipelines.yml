@@ -48,7 +48,7 @@ stages:
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
                 'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
-                'Enabling InvokeDscResource's Experimental Feature'
+                'Enabling InvokeDscResource Experimental Feature'
                 pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
           - task: PowerShell@2
