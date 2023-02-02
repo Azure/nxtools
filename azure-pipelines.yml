@@ -50,7 +50,7 @@ stages:
                 'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
                 'Enabling InvokeDscResource Experimental Feature'
-                pwsh -c 'ipmo PSDesiredStateConfiguration -PassThru; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue 2>&1'
+                pwsh -c 'ipmo PSDesiredStateConfiguration -PassThru; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue -ev err; $err | ConvertTo-JSON | Write-Warning'
 
           - task: PowerShell@2
             name: package
