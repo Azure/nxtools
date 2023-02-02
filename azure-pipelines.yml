@@ -44,8 +44,11 @@ stages:
               targetType: inline
               continueOnError: true
               script: |
+                'Enabling Experimental feature.'
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
+                'Enabling InvokeDscResource's Experimental Feature'
                 pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
           - task: PowerShell@2
@@ -97,8 +100,11 @@ stages:
               pwsh: true
               targetType: inline
               script: |
+                'Enabling Experimental feature.'
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
+                'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
+                'Enabling InvokeDscResource's Experimental Feature'
                 pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
                 pwsh -c {
