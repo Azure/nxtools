@@ -35,7 +35,7 @@ build.ps1 -Tasks build
 ```  
 This will build the nxtools module in your `output/module` folder.
 
-Should you want to build the GuestConfiguration packge, run the following instead:  
+Should you want to build the GuestConfiguration package, run the following instead:  
 ```powershell
 build.ps1 -Tasks gcpol
 ```
