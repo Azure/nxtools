@@ -49,8 +49,8 @@ stages:
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
                 'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
-                'Enabling InvokeDscResource Experimental Feature'
-                pwsh -c 'ipmo PSDesiredStateConfiguration -PassThru; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue -ev err; $err | ConvertTo-JSON | Write-Warning'
+                'Installing libmi'
+                pwsh -c 'Install-Module -Force -PassThru -Name PSWSMan; Install-PSWSMan'
 
           - task: PowerShell@2
             name: package
@@ -105,8 +105,8 @@ stages:
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
                 'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
-                'Enabling InvokeDscResource Experimental Feature'
-                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
+                'installing libmi'
+                pwsh -c 'Install-Module -Force -PassThru -Name PSWSMan; Install-PSWSMan'
 
                 pwsh -c {
                   Import-Module -Name PSDesiredStateConfiguration -PassThru
