@@ -50,7 +50,7 @@ stages:
                 'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
                 'Installing libmi'
-                pwsh -c 'Install-Module -Force -PassThru -Name PSWSMan; Install-PSWSMan'
+                pwsh -c 'Install-Module -Force -PassThru -Name PSWSMan; Install-WSMan'
 
           - task: PowerShell@2
             name: package
@@ -106,7 +106,7 @@ stages:
                 'Installing PSDSCv3 module'
                 pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
                 'installing libmi'
-                pwsh -c 'Install-Module -Force -PassThru -Name PSWSMan; Install-PSWSMan'
+                pwsh -c 'Install-Module -Force -PassThru -Name PSWSMan; Install-WSMan'
 
                 pwsh -c {
                   Import-Module -Name PSDesiredStateConfiguration -PassThru
