@@ -217,13 +217,21 @@ Currently, we cannot accept contributions.
 
 ## Versioning and changelog
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [PSGallery](https://powershellgallery.com/packages/nxtools).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [PSGallery](https://powershellgallery.com/packages/nxtools). We are using SemVer 2.0.
 
 It is a good practice to keep `CHANGELOG.md` file in repository that can be updated as part of a pull request.
 
 ## Authors
 
 - [gaelcolas](https://github.com/gaelcolas)
+- [nitinbps](https://github.com/nitinbps)
+
+## Maintainers
+
+- [nitinbps](https://github.com/nitinbps)
+- [amitsara](https://github.com/amitsara)
+- [juliamwang6](https://github.com/juliamwang6)
+- [jodiboone](https://github.com/jodiboone)
 
 ## License
 
@@ -231,9 +239,9 @@ This project is licensed under the MIT - see the [LICENSE](LICENSE) file for det
 
 ## Support
 
-This module is intended to provide guidelines / samples to help authors to create their own configurations and resource modules for use in custom Guest Configuration projects.
+This module is intended to provide guidelines / samples to help authors to create their own configurations and resource modules for use in custom Machine Configuration projects.
 
-If there are any questions and comments, we will try to get to them but may not be able to.
+Support is best effort via GitHub issues. If there are any questions and comments, we will try to get to them but may not be able to.
 
 ## Disclaimer
 
