@@ -22,7 +22,7 @@ stages:
       - job: Package_Module
         displayName: 'Package Module'
         pool:
-          vmImage: 'ubuntu-20.04'
+          vmImage: 'ubuntu-latest'
         steps:
 
           - pwsh: |
@@ -44,9 +44,13 @@ stages:
               targetType: inline
               continueOnError: true
               script: |
+                pwsh -c '$PSVersionTable'
+                'Enabling Experimental feature.'
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
-                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
-                pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
+                'Installing PSDSCv3 module'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
+                'Enabling InvokeDscResource Experimental Feature'
+                pwsh -c 'ipmo PSDesiredStateConfiguration -PassThru; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue -ev err; $err | ConvertTo-JSON | Write-Warning'
 
           - task: PowerShell@2
             name: package
@@ -81,7 +85,7 @@ stages:
       - job: Test_HQRM
         displayName: 'HQRM'
         pool:
-          vmImage: 'ubuntu-20.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -97,8 +101,11 @@ stages:
               pwsh: true
               targetType: inline
               script: |
+                'Enabling Experimental feature.'
                 pwsh -c 'Enable-ExperimentalFeature -Name PSSubsystemPluginModel'
-                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force'
+                'Installing PSDSCv3 module'
+                pwsh -c 'Install-Module -Name PSDesiredStateConfiguration -Force -AllowPrerelease'
+                'Enabling InvokeDscResource Experimental Feature'
                 pwsh -c 'ipmo PSDesiredStateConfiguration; Enable-ExperimentalFeature -Name PSDesiredStateConfiguration.InvokeDscResource -ErrorAction SilentlyContinue'
 
                 pwsh -c {
@@ -117,7 +124,7 @@ stages:
       - job: Test_Unit
         displayName: 'Unit'
         pool:
-          vmImage: 'ubuntu-20.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - task: DownloadPipelineArtifact@2
@@ -151,7 +158,7 @@ stages:
       # - job: Test_Integration
       #   displayName: 'Integration'
       #   pool:
-      #     vmImage: 'ubuntu-20.04'
+      #     vmImage: 'ubuntu-latest'
       #   timeoutInMinutes: 0
       #   steps:
       #     - task: DownloadPipelineArtifact@2
@@ -180,7 +187,7 @@ stages:
         displayName: 'Publish Code Coverage'
         dependsOn: Test_Unit
         pool:
-          vmImage: 'ubuntu-20.04'
+          vmImage: 'ubuntu-latest'
         timeoutInMinutes: 0
         steps:
           - pwsh: |
@@ -228,7 +235,7 @@ stages:
       - job: Deploy_Module
         displayName: 'Deploy Module'
         pool:
-          vmImage: 'ubuntu-20.04'
+          vmImage: 'ubuntu-latest'
         steps:
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Pipeline Artifact'
