@@ -217,7 +217,7 @@ Currently, we cannot accept contributions.
 
 ## Versioning and changelog
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [PSGallery](https://powershellgallery.com/packages/nxtools). We are using SemVer 2.0.
+We use [SemVer](http://semver.org/) version 2.0 for versioning. For the versions available, see the [PSGallery](https://powershellgallery.com/packages/nxtools).
 
 It is a good practice to keep `CHANGELOG.md` file in repository that can be updated as part of a pull request.
 
