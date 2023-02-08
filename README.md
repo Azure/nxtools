@@ -224,7 +224,6 @@ It is a good practice to keep `CHANGELOG.md` file in repository that can be upda
 ## Authors
 
 - [gaelcolas](https://github.com/gaelcolas)
-- [nitinbps](https://github.com/nitinbps)
 
 ## Maintainers
 
