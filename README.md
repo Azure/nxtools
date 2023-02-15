@@ -250,7 +250,7 @@ Further, the machine configuration artifact build process is private, so the onl
 
 ## Third-party notice
 
-This project was created by Gael Colas, who is a contractor working with Microsoft.
+This project was created by Gael Colas, who was a contractor working with Microsoft.
 
 The third-party tools we are using that are nested in this module are [PSNativeCmdDevKit](https://github.com/dsccommunity/PSNativeCmdDevKit) and [DscResource.Common](https://github.com/dsccommunity/DscResource.Common) from the [DSC Community](https://github.com/dsccommunity/). All the other tools mentioned are only for building and testing.
 
