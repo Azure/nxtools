@@ -9,6 +9,8 @@ Tags: comma,separated,list,of,tags
 
 # nxtools 
 
+**NOTE: We are currently NOT accepting PRs for this project**
+
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/nxtools?label=nxtools%20Preview)](https://www.powershellgallery.com/packages/nxtools/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/nxtools?label=nxtools)](https://www.powershellgallery.com/packages/nxtools/)
 ![PowerShell Gallery](https://img.shields.io/powershellgallery/p/nxtools)
@@ -16,7 +18,7 @@ Tags: comma,separated,list,of,tags
 
 Collection of Posix tools wrappers.
 
-This module intend to make managing Linux or Unix systems easier for PowerShell users.
+This module intends to make managing Linux or Unix systems easier for PowerShell users.
 It does so by:
 - Providing PowerShell wrappers around well known commands.
 - Leveraging PowerShell's idosyncratic value-add such as Pipeline, streams and more.
@@ -244,7 +246,7 @@ Support is best effort via GitHub issues. If there are any questions and comment
 
 ## Disclaimer
 
-We are not currently accepting PRs, but will allow them later once the functionality is available.
+We are not currently accepting PRs.
 
 Further, the machine configuration artifact build process is private, so the only feedback we can provide on a public PR is functional testing. We will have to do a full private integration test before merging.
 
