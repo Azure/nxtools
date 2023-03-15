@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial addition of commandd:
     - `Get-nxKernelInfo`: A simple wrapper around `uname -a`.
-    - `Get-nxLinuxStandardBaseRelease`: A quick wrap of `lsb_release -a` command (this `lsb_release` must be present on the system).
+    - `Get-nxLSBRelease`: A quick wrap of `lsb_release -a` command (this `lsb_release` must be present on the system).
     - `Get-nxDistributionInfo`: Parsing information found in `/etc/*-release`.
     - `Get-nxItem`: Similar to Get-Item for file system provider but on Linux using `ls -d`.
     - `Get-nxChildItem`: Similar to Get-ChildItem for the FileSystem provider but on Linux, this will use the `ls` command.
