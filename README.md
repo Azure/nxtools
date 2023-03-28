@@ -24,8 +24,8 @@ It does so by:
 - Leveraging PowerShell's idosyncratic value-add such as Pipeline, streams and more.
 - Passing through objects such as `[nxLocalUser]`, `[nxLocalGroup]`, `[nxFile]`, removing the need for parsing.
 - Offering cmdlets for imperative invocation.
-- DSC Resources for declarative state representation to use with Azure Policy Guest Configuration.
-- Pre-built Guest Configuration Package to be used in Policies.
+- DSC Resources for declarative state representation to use with Azure Automanage Machine Configuration.
+- Pre-built Machine Configuration Package to be used in Policies.
 
 ---
 
@@ -37,7 +37,7 @@ build.ps1 -Tasks build
 ```  
 This will build the nxtools module in your `output/module` folder.
 
-Should you want to build the GuestConfiguration package, run the following instead:  
+Should you want to build the Machine Configuration package, run the following instead:  
 ```powershell
 build.ps1 -Tasks gcpol
 ```
