@@ -15,7 +15,11 @@ function Install-nxPackage
 
         [Parameter()]
         [nxSupportedPackageType[]]
-        $PackageType = (Get-nxSupportedPackageType)
+        $PackageType = (Get-nxSupportedPackageType),
+
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
+        [switch]
+        $Force
     )
 
     begin
@@ -29,6 +33,7 @@ function Install-nxPackage
 
     end
     {
+
         if ($PSBoundParameters.ContainsKey('PackageType'))
         {
             $null = $PSBoundParameters.Remove('PackageType')

@@ -13,7 +13,11 @@ function Install-nxAptPackage
         [ValidateNotNullOrEmpty()]
         [string]
         # Specifc Version of a package that you want to find in the Cached list of packages.
-        $Version
+        $Version,
+
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
+        [switch]
+        $Force
     )
 
     begin
@@ -25,6 +29,12 @@ function Install-nxAptPackage
     {
         # apt-get install
         $aptGetInstallParams = @('install','--quiet')
+
+        if ($PSBoundParameters.ContainsKey('Force') -and $PSBoundParameters['Force'])
+        {
+            $aptGetInstallParams += @('--yes')
+        }
+
         foreach ($packageName in $Name)
         {
             $packageToInstall = $packageName
