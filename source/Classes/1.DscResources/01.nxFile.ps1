@@ -306,7 +306,7 @@ class nxFile
     [bool] Test()
     {
         $currentState = $this.Get()
-        $testTargetResourceResult = $currentState.Reasons -eq 0
+        $testTargetResourceResult = $currentState.Reasons.count -eq 0
 
         return $testTargetResourceResult
     }

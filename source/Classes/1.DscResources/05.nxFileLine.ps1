@@ -19,9 +19,11 @@ class nxFileLine
     [DscProperty()] #WriteOnly
     [bool] $CaseSensitive = $false
 
+    [DscProperty()]
     # Append, AfterLinePatternMatch, BeforeLinePatternMatch
     [nxFileLineAddMode] $AddLineMode = [nxFileLineAddMode]::Append
 
+    [DscProperty()]
     [string] $LinePattern
 
     [DscProperty(NotConfigurable)]
