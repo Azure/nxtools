@@ -217,7 +217,7 @@ class nxUser
                 {
                     $newNxLocalUserParam.Add(
                         'UserInfo',
-                        ('{0},,,,{1},' -f $this.FullName, $this.Description)
+                        ('{0},,,,{1}' -f $this.FullName, $this.Description)
                     )
                 }
 
