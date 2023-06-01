@@ -5,9 +5,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed nxUser Set function failure when FullName and Description are populated.
+
+## [1.0.0] - 2023-05-25
+
 ### Added
 
 - Added PS DSC module dependency and release notes to README.md, including Microsoft copyright.
+
+### Fixed
+
+- Fixed HQRM style non-compliance.
+- Fixed issue with nxTools when reporting compliance but package version issue (thanks to Jan Egil Ring).
+- Fixed an issue with the nxFile Test function where it was always returning False.
+- Fixed nxFileLine causing an unknown propertyName error.
+
+## [0.4.0-preview0001] - 2023-03-16
+
+### Added
+
 - Added KitchenCI tests for the packages on ubuntu-18.04, debian-10, and centos-7.5.
 - Added the `Functions` test suite for Kitchen-Pester.
 - Added `[nxFileLine]` and `[nxFileContentReplace]` DSC Resources to manage file content.
@@ -42,10 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed the issue on centos/red hat where the MODE contains a trailing `.`.
-- Fixed HQRM style non-compliance.
-- Fixed issue with nxTools when reporting compliance but package version issue (thanks to Jan Egil Ring).
-- Fixed an issue with the nxFile Test function where it was always returning False.
-- Fixed nxFileLine causing an unknown propertyName error.
+- Relying on ModuleVersion from Module manifest.
+
+### Changed
+
+- Setting up official pipeline.
 
 ### Removed
 
