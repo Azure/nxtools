@@ -193,7 +193,7 @@ function New-nxLocalUser
 
         if ($PSBoundParameters.ContainsKey('UserInfo') -and $PSBoundParameters['UserInfo'])
         {
-            $userAddParams += @('-c', $UserInfo)
+            $userAddParams += @('-c', ('"{0}"' -f $UserInfo))
         }
 
         if ($PSBoundParameters.ContainsKey('ExpireOn') -and $PSBoundParameters['ExpireOn'])
