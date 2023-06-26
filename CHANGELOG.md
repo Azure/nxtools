@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- DscResource:
+    - `nxScript`: Simple resource for executing scripts on Linux machines.
+
 ### Fixed
 
 - Fixed nxUser Set function failure when FullName and Description are populated.
