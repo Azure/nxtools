@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - DscResource:
-    - `nxScript`: Simple resource for executing scripts on Linux machines.
+    - `nxScript`: Simple resource for executing scripts.
 
 ### Fixed
 

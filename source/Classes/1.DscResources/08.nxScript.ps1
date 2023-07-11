@@ -23,7 +23,6 @@ class nxScript
         $currentState.GetScript = $this.GetScript
         $currentState.TestScript = $this.TestScript
         $currentState.SetScript = $this.SetScript
-        $currentState.Reasons = @([Reason]::new())
         if ($isValid)
         {
             $currentState.Reasons = $invokeScriptResult.Reasons
@@ -39,11 +38,13 @@ class nxScript
 
         if ($invokeScriptResult -is [System.Management.Automation.ErrorRecord])
         {
+            Write-Verbose -Message "TestScript returned an error."
             return $false
         }
 
         if ($null -eq $invokeScriptResult -or -not ($invokeScriptResult -is [System.Boolean]))
         {
+            Write-Verbose -Message "TestScript output is not a Boolean."
             return $false
         }
 
@@ -76,22 +77,26 @@ class nxScript
     {
         if ($GetScriptOutput -is [System.Management.Automation.ErrorRecord])
         {
+            Write-Verbose -Message "GetScript returned an error."
             return $false
         }
 
         if ($GetScriptOutput -isnot [System.Collections.Hashtable])
         {
+            Write-Verbose -Message "GetScript output is not a hashtable."
             return $false
         }
 
         if (-not $GetScriptOutput.ContainsKey('Reasons'))
         {
+            Write-Verbose -Message "GetScript output does not contain a 'Reasons' key."
             return $false
         }
 
         $outputReasons = $GetScriptOutput['Reasons']
         if ($outputReasons.Count -eq 0)
         {
+            Write-Verbose -Message "GetScript output does not contain any 'Reasons'."
             return $false
         }
 
@@ -99,11 +104,13 @@ class nxScript
         {
             if ($outputReason -isnot [System.Collections.Hashtable])
             {
+                Write-Verbose -Message "GetScript reason is not a hashtable."
                 return $false
             }
 
             if (-not $outputReason.ContainsKey('Code') -or -not $outputReason.ContainsKey('Phrase'))
             {
+                Write-Verbose -Message "GetScript reason does not have a 'Code' key or a 'Phrase' key."
                 return $false
             }
         }
