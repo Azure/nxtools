@@ -19,10 +19,9 @@ configuration CreateFileNxScript
     nxScript MyScript
     {
         GetScript = {
-            $Reason = @{
-                Code = "Script:Script:FileMissing"
-                Phrase = "File does not exist"
-            }
+            $Reason = [Reason]::new()
+            $Reason.Code = "Script:Script:FileMissing"
+            $Reason.Phrase = "File does not exist"
 
             if (Test-Path -Path $using:FilePath)
             {
@@ -43,11 +42,6 @@ configuration CreateFileNxScript
                 Reasons = @($Reason)
             }
         }
-        SetScript = {
-            $streamWriter = New-Object -TypeName 'System.IO.StreamWriter' -ArgumentList @($using:FilePath)
-            $streamWriter.WriteLine($using:FileContent)
-            $streamWriter.Close()
-        }
         TestScript = {
             if (Test-Path -Path $using:FilePath)
             {
@@ -58,6 +52,11 @@ configuration CreateFileNxScript
             {
                 return $false
             }
+        }
+        SetScript = {
+            $streamWriter = New-Object -TypeName 'System.IO.StreamWriter' -ArgumentList @($using:FilePath)
+            $streamWriter.WriteLine($using:FileContent)
+            $streamWriter.Close()
         }
     }
 }

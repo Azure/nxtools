@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - DscResource:
-    - `nxScript`: Simple resource for executing scripts.
+    - `nxScript`: Simple resource for executing scripts in PowerShell 7.
 
 ### Fixed
 

@@ -1,13 +1,13 @@
 [DscResource()]
 class nxScript
 {
-    [DscProperty(Key)]
+    [DscProperty()]
     [System.String] $GetScript
 
     [DscProperty(Key)]
     [System.String] $TestScript
 
-    [DscProperty(Key)]
+    [DscProperty()]
     [System.String] $SetScript
 
     [DscProperty()]
@@ -15,37 +15,41 @@ class nxScript
 
     [nxScript] Get()
     {
-        $scriptBlock = [System.Management.Automation.ScriptBlock]::Create($this.GetScript)
-        $invokeScriptResult = $this.InvokeScript($scriptBlock)
-        $isValid = $this.TestGetScriptOutput($invokeScriptResult)
-
-        $currentState = [nxScript]::new()
-        $currentState.GetScript = $this.GetScript
-        $currentState.TestScript = $this.TestScript
-        $currentState.SetScript = $this.SetScript
-        if ($isValid)
+        if (-not $this.GetScript)
         {
-            $currentState.Reasons = $invokeScriptResult.Reasons
+            # The GetScript script block was not defined
+            return $this
         }
 
-        return $currentState
+        $scriptBlock = [System.Management.Automation.ScriptBlock]::Create($this.GetScript)
+        $invokeScriptResult = $this.InvokeScript($scriptBlock)
+        if ($invokeScriptResult -is [System.Management.Automation.ErrorRecord])
+        {
+            throw "The GetScript script block returned an error: $invokeScriptResult."
+        }
+
+        $isValid = $this.TestGetScriptOutput($invokeScriptResult)
+        if (-not $isValid)
+        {
+            throw "The GetScript script block must return a hashtable that contains a non-empty list of Reason objects under the Reasons key."
+        }
+
+        $this.Reasons = $invokeScriptResult.Reasons
+        return $this
     }
 
     [bool] Test()
     {
         $scriptBlock = [System.Management.Automation.ScriptBlock]::Create($this.TestScript)
         $invokeScriptResult = $this.InvokeScript($scriptBlock)
-
         if ($invokeScriptResult -is [System.Management.Automation.ErrorRecord])
         {
-            Write-Verbose -Message "TestScript returned an error."
-            return $false
+            throw "The TestScript script block returned an error: $invokeScriptResult."
         }
 
         if ($null -eq $invokeScriptResult -or -not ($invokeScriptResult -is [System.Boolean]))
         {
-            Write-Verbose -Message "TestScript output is not a Boolean."
-            return $false
+            throw "The TestScript script block must return a Boolean."
         }
 
         return $invokeScriptResult
@@ -53,8 +57,14 @@ class nxScript
 
     [void] Set()
     {
+        if (-not $this.SetScript)
+        {
+            # The SetScript script block was not defined
+            return
+        }
+
         $scriptBlock = [System.Management.Automation.ScriptBlock]::Create($this.SetScript)
-        $this.InvokeScript($scriptBlock)
+        $null = $this.InvokeScript($scriptBlock)
     }
 
     [System.Object] InvokeScript([System.Management.Automation.ScriptBlock] $ScriptBlock)
@@ -75,42 +85,30 @@ class nxScript
 
     [bool] TestGetScriptOutput([System.Object] $GetScriptOutput)
     {
-        if ($GetScriptOutput -is [System.Management.Automation.ErrorRecord])
-        {
-            Write-Verbose -Message "GetScript returned an error."
-            return $false
-        }
-
         if ($GetScriptOutput -isnot [System.Collections.Hashtable])
         {
-            Write-Verbose -Message "GetScript output is not a hashtable."
+            Write-Verbose -Message "The GetScript script block must return a hashtable"
             return $false
         }
 
-        if (-not $GetScriptOutput.ContainsKey('Reasons'))
+        if (-not $GetScriptOutput.ContainsKey("Reasons"))
         {
-            Write-Verbose -Message "GetScript output does not contain a 'Reasons' key."
+            Write-Verbose -Message "The hashtable does not have a Reasons key"
             return $false
         }
 
-        $outputReasons = $GetScriptOutput['Reasons']
+        $outputReasons = $GetScriptOutput["Reasons"]
         if ($outputReasons.Count -eq 0)
         {
-            Write-Verbose -Message "GetScript output does not contain any 'Reasons'."
+            Write-Verbose -Message "The Reasons list is empty"
             return $false
         }
 
         foreach ($outputReason in $outputReasons)
         {
-            if ($outputReason -isnot [System.Collections.Hashtable])
+            if ($outputReason -isnot [Reason])
             {
-                Write-Verbose -Message "GetScript reason is not a hashtable."
-                return $false
-            }
-
-            if (-not $outputReason.ContainsKey('Code') -or -not $outputReason.ContainsKey('Phrase'))
-            {
-                Write-Verbose -Message "GetScript reason does not have a 'Code' key or a 'Phrase' key."
+                Write-Verbose -Message "One of the Reasons is not a Reason object"
                 return $false
             }
         }
