@@ -1,3 +1,29 @@
+<#
+    .DESCRIPTION
+        This example shows how to create a file with [nxScript].
+
+    .NOTES
+        Because the resources are class based, you can also test the resource this way:
+
+        using module nxtools # assuming it's available via $Env:PSModulePath.
+
+        $rsrc = [nxScript]@{
+            GetScript = {
+                # Implementation...
+            }
+            TestScript = {
+                # Implementation...
+            }
+            SetScript = {
+                # Implementation...
+            }
+        }
+
+        $rsrc.Get().Reasons
+        $rsrc.Set()
+        $rsrc.Get()
+#>
+
 configuration CreateFileNxScript
 {
     [CmdletBinding()]
