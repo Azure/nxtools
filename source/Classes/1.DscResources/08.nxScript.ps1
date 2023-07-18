@@ -15,9 +15,10 @@ class nxScript
 
     [nxScript] Get()
     {
-        if (-not $this.GetScript)
+        if ([string]::IsNullOrEmpty($this.GetScript))
         {
             # The GetScript script block was not defined
+            $this.Reasons = $null
             return $this
         }
 
@@ -57,7 +58,7 @@ class nxScript
 
     [void] Set()
     {
-        if (-not $this.SetScript)
+        if ([string]::IsNullOrEmpty($this.SetScript))
         {
             # The SetScript script block was not defined
             return
@@ -93,14 +94,14 @@ class nxScript
 
         if (-not $GetScriptOutput.ContainsKey("Reasons"))
         {
-            Write-Verbose -Message "The hashtable does not have a Reasons key"
+            Write-Verbose -Message "The hashtable returned by GetScript does not contain a Reasons key"
             return $false
         }
 
         $outputReasons = $GetScriptOutput["Reasons"]
         if ($outputReasons.Count -eq 0)
         {
-            Write-Verbose -Message "The Reasons list is empty"
+            Write-Verbose -Message "The Reasons list returned by GetScript is empty"
             return $false
         }
 
@@ -108,7 +109,7 @@ class nxScript
         {
             if ($outputReason -isnot [Reason])
             {
-                Write-Verbose -Message "One of the Reasons is not a Reason object"
+                Write-Verbose -Message "One of the Reasons returned by GetScript is not a Reason object"
                 return $false
             }
         }

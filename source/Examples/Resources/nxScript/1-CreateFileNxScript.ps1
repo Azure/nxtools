@@ -80,9 +80,7 @@ configuration CreateFileNxScript
             }
         }
         SetScript = {
-            $streamWriter = New-Object -TypeName 'System.IO.StreamWriter' -ArgumentList @($using:FilePath)
-            $streamWriter.WriteLine($using:FileContent)
-            $streamWriter.Close()
+            $null = Set-Content -Path $using:FilePath -Value $using:FileContent
         }
     }
 }
