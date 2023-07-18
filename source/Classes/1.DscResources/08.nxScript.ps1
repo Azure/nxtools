@@ -19,7 +19,7 @@ class nxScript
         {
             $Reason = [Reason]::new()
             $Reason.Code = "Script:Script:GetScriptNotDefined"
-            $Reason.Phrase = "The GetScript script block was not defined"
+            $Reason.Phrase = "Cannot determine reason for non-compliance. Please define Reasons in the hashtable returned from the GetScript script block to return reasons for non-compliance."
             $this.Reasons = @($Reason)
             return $this
         }
