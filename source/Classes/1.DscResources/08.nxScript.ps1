@@ -17,8 +17,10 @@ class nxScript
     {
         if ([string]::IsNullOrEmpty($this.GetScript))
         {
-            # The GetScript script block was not defined
-            $this.Reasons = $null
+            $Reason = [Reason]::new()
+            $Reason.Code = "Script:Script:GetScriptNotDefined"
+            $Reason.Phrase = "The GetScript script block was not defined"
+            $this.Reasons = @($Reason)
             return $this
         }
 
