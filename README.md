@@ -122,6 +122,7 @@ Here are the public commands available.
 - `nxPackage`: Audit (for now) whether a package is installed or not in a system (currently supports apt only).
 - `nxFileLine`: Ensure an exact line is present/absent in a file, and remediate by appending, inserting, deleting as needed.
 - `nxFileContentReplace`: Replace the content in a file if a pattern is found.
+- `nxScript`: Simple resource for executing scripts in PowerShell 7.
 
 ## Guest Configuration Packages
 
