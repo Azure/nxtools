@@ -2,11 +2,13 @@ using module nxtools
 
 Describe "nxScript resource for executing scripts in PowerShell 7" {
     Context "When GetScript is not defined" {
-        It "Should return the nxScript object" {
+        It "Should return the nxScript object with a default Reason" {
             $nxScript = [nxScript]::new()
             $result = $nxScript.Get()
             $result | Should -Be $nxScript
-            $result.Reasons.Count | should -Be 0
+            $result.Reasons.Count | should -Be 1
+            $result.Reasons[0].Code | Should -Be "Script:Script:GetScriptNotDefined"
+            $result.Reasons[0].Phrase | Should -Be "The GetScript script block was not defined"
         }
     }
 
