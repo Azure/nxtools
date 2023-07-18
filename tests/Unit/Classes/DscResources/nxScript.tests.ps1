@@ -8,7 +8,7 @@ Describe "nxScript resource for executing scripts in PowerShell 7" {
             $result | Should -Be $nxScript
             $result.Reasons.Count | should -Be 1
             $result.Reasons[0].Code | Should -Be "Script:Script:GetScriptNotDefined"
-            $result.Reasons[0].Phrase | Should -Be "The GetScript script block was not defined"
+            $result.Reasons[0].Phrase | Should -Be "Cannot determine reason for non-compliance. Please define Reasons in the hashtable returned from the GetScript script block to return reasons for non-compliance."
         }
     }
 
