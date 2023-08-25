@@ -115,6 +115,7 @@ class nxPackage
             # Anyway, whether absent or present at wrong version, we can only try to install at specific version
             $installnxPackageParams = @{
                 Name = $this.Name
+                Force = $true
             }
 
             if (-not [string]::IsNullOrEmpty)
