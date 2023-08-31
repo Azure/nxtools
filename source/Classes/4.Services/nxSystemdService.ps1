@@ -9,8 +9,6 @@ class nxSystemdService : nxService
     [string] $Status # Specific to Systemctl
     [string] $Description
 
-    [Reason[]] $Reasons
-
     nxSystemdService()
     {
         # default ctor
