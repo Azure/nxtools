@@ -15,6 +15,9 @@ class nxService
     [DscProperty()] # Write Only
     [nxInitSystem] $Controller = (Get-nxInitSystem)
 
+    [DscProperty(NotConfigurable)]
+    [Reason[]] $Reasons
+
     hidden [void] SetNxServiceProperties([IDictionary] $Definition)
     {
         if ($Definition.keys -notcontains 'Name')
@@ -30,7 +33,12 @@ class nxService
 
     [nxService] Get()
     {
-        $currentState = Get-nxService -Name $this.Name
+        $nxService = Get-nxService -Name $this.Name
+        $currentState = [nxService]::new()
+        $currentState.Name = $nxService.Name
+        $currentState.Enabled = $nxService.Enabled
+        $currentState.State = $nxService.State
+        $currentState.Controller = $this.Controller
 
         if (-not $currentState)
         {
