@@ -407,7 +407,7 @@ class nxFile
             $nxFileSystemInfo = Get-nxItem -Path $this.DestinationPath -ErrorAction Stop | Where-Object -FilterScript { $this.Type -eq $_.nxFileSystemItemType}
             if ($nxFileSystemInfo -and $currentState.Ensure -eq [Ensure]::Present)
             {
-                Remove-Item -Path $nxFileSystemInfo.DestinationPath -Force:($this.Force) -Recurse:($this.Recurse) -Confirm:$false
+                Remove-Item -Path $nxFileSystemInfo.FullName -Force:($this.Force) -Recurse:($this.Recurse) -Confirm:$false
             }
         }
     }
