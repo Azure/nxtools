@@ -40,7 +40,7 @@ class nxService
         $currentState.State = $nxService.State
         $currentState.Controller = $this.Controller
 
-        if (-not $currentState)
+        if (-not $currentState.Name)
         {
             # Silently return if the service does not exist
             Write-Warning -Message ('Service ''{0}'' could not be found.' -f $this.Name)
@@ -68,7 +68,7 @@ class nxService
         {
             'Enabled'
             {
-                if ($null -ne $this.enabled -and $currentState -and $this.Enabled -ne $currentState.Enabled)
+                if ($null -ne $this.enabled -and $this.Enabled -ne $currentState.Enabled)
                 {
                     $enabledReference = @{
                         $true = 'enabled'
@@ -84,7 +84,7 @@ class nxService
 
             'State'
             {
-                if ($null -ne $this.State -and $currentState -and $this.State -ne $currentState.State)
+                if ($null -ne $this.State -and $this.State -ne $currentState.State)
                 {
                     [Reason]@{
                         Code = '{0}:{0}:State' -f 'nxService'

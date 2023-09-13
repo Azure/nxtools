@@ -5,9 +5,7 @@ $script:testService = "myTestService.service" # Mock service for testing
 Describe "nxService resource for managing services on a Linux node" {
     BeforeAll {
         Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
-            $expected = @('is-enabled', $testService)
-            $diff = Compare-Object $Parameters $expected
-            return $Executable -eq "systemctl" -and $diff.Count -eq 0
+            return $Executable -eq "systemctl" -and $Parameters -contains "is-enabled"
         } -MockWith { "enabled" }
 
         Mock -ModuleName 'nxtools' -CommandName 'Get-nxInitSystem' -MockWith { [nxInitSystem]::systemd }
@@ -90,6 +88,31 @@ Describe "nxService resource for managing services on a Linux node" {
             $result.Reasons[0].Code | Should -Be "nxService:nxService:State"
             $result.Reasons[0].Phrase | Should -Be "The service '$testService' is present but we're expecting it to be 'Running' instead of 'Stopped'"
             $nxService.Test() | Should -Be $false
+        }
+    }
+
+    Context "When the service does not exist" {
+        BeforeEach {
+            Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
+                $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', $testService)
+                $diff = Compare-Object $Parameters $expected
+                return $Executable -eq "systemctl" -and $diff.Count -eq 0
+            } -MockWith { "" }
+        }
+
+        It "Should be always be compliant" {
+            $nxService = [nxService]::new()
+            $nxService.Name = $testService
+            $nxService.Enabled = $false
+            $nxService.State = "Stopped"
+            $result = $nxService.Get()
+            $result.Reasons.Count | Should -Be 0
+            $nxService.Test() | Should -Be $true
+            $nxService.Enabled = $true
+            $nxService.State = "Running"
+            $result = $nxService.Get()
+            $result.Reasons.Count | Should -Be 0
+            $nxService.Test() | Should -Be $true
         }
     }
 }
