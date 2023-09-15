@@ -34,18 +34,18 @@ class nxService
     [nxService] Get()
     {
         $nxService = Get-nxService -Name $this.Name
-        $currentState = [nxService]::new()
-        $currentState.Name = $nxService.Name
-        $currentState.Enabled = $nxService.Enabled
-        $currentState.State = $nxService.State
-        $currentState.Controller = $this.Controller
-
-        if (-not $currentState.Name)
+        if ($null -eq $nxService.Name)
         {
             # Silently return if the service does not exist
             Write-Warning -Message ('Service ''{0}'' could not be found.' -f $this.Name)
             return [nxService]::new()
         }
+
+        $currentState = [nxService]::new()
+        $currentState.Name = $nxService.Name
+        $currentState.Enabled = $nxService.Enabled
+        $currentState.State = $nxService.State
+        $currentState.Controller = $this.Controller
 
         $valuesToCheck = @(
             'Enabled'
