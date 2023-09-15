@@ -1,7 +1,7 @@
 class nxEtcShadowEntry
 {
     hidden static [regex] $EtcShadowLineParser = @(
-        '^(?<username>[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$))'
+        '^(?<username>[a-zA-Z_\.@]([a-zA-Z0-9_\.@-]{0,31}|[a-zA-Z0-9_\.@-]{0,30}\$))'
         '(?<password>[^:]*)'
         '(?<lastchanged>[^:]*)'
         '(?<min>[^:]*)'

@@ -44,7 +44,7 @@ function Get-nxLocalUser
             {
                 Write-Debug -Message "[Get-nxLocalUser] Finding Local users by UserName '$userNameEntry'."
                 $allUsers | Where-Object -FilterScript {
-                    $_.username -eq $userNameEntry
+                    $_.username -ceq $userNameEntry
                 }
             }
         }
