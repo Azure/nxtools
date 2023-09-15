@@ -5,7 +5,9 @@ $script:testService = "myTestService.service" # Mock service for testing
 Describe "nxService resource for managing services on a Linux node" {
     BeforeAll {
         Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
-            return $Executable -eq "systemctl" -and $Parameters -contains "is-enabled"
+            $expected = @('is-enabled', $testService)
+            $diff = Compare-Object $Parameters $expected
+            return $Executable -eq "systemctl" -and $diff.Count -eq 0
         } -MockWith { "enabled" }
 
         Mock -ModuleName 'nxtools' -CommandName 'Get-nxInitSystem' -MockWith { [nxInitSystem]::systemd }
@@ -60,7 +62,7 @@ Describe "nxService resource for managing services on a Linux node" {
     }
 
     Context "When the service is stopped" {
-        BeforeEach {
+        BeforeAll {
             Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
                 $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', $testService)
                 $diff = Compare-Object $Parameters $expected
@@ -92,7 +94,13 @@ Describe "nxService resource for managing services on a Linux node" {
     }
 
     Context "When the service does not exist" {
-        BeforeEach {
+        BeforeAll {
+            Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
+                $expected = @('is-enabled', "")
+                $diff = Compare-Object $Parameters $expected
+                return $Executable -eq "systemctl" -and $diff.Count -eq 0
+            } -MockWith { "enabled" }
+
             Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
                 $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', $testService)
                 $diff = Compare-Object $Parameters $expected

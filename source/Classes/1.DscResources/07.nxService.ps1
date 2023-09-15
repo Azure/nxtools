@@ -34,7 +34,7 @@ class nxService
     [nxService] Get()
     {
         $nxService = Get-nxService -Name $this.Name
-        if ($null -eq $nxService.Name)
+        if ([string]::IsNullOrEmpty($nxService.Name))
         {
             # Silently return if the service does not exist
             Write-Warning -Message ('Service ''{0}'' could not be found.' -f $this.Name)
