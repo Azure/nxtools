@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed nxFile not able to delete files.
 - Fixed nxUser failing if any users in /etc/passwd have uppercase letters in their username.
 
 ## [1.2.0] - 2023-09-08
