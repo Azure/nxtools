@@ -44,7 +44,7 @@ function Get-nxEtcShadow
             {
                 Write-Debug -Message "[Get-nxEtcShadowEntry] Finding Local users by UserName '$userNameEntry'."
                 $allUsers | Where-Object -FilterScript {
-                    $_.username -eq $userNameEntry
+                    $_.username -ceq $userNameEntry
                 }
             }
         }
