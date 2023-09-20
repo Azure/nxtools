@@ -93,13 +93,13 @@ Describe "nxService resource for managing services on a Linux node" {
         }
     }
 
-    Context "When the service does not exist" {
+    Context "When the service does not exist or is not running and not enabled" {
         BeforeAll {
             Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
                 $expected = @('is-enabled', "")
                 $diff = Compare-Object $Parameters $expected
                 return $Executable -eq "systemctl" -and $diff.Count -eq 0
-            } -MockWith { "enabled" }
+            } -MockWith { "disabled" }
 
             Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
                 $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', $testService)
@@ -108,16 +108,41 @@ Describe "nxService resource for managing services on a Linux node" {
             } -MockWith { "" }
         }
 
-        It "Should be always be compliant" {
+        It "Should be noncompliant when expecting Enabled=True and State=Running" {
+            $nxService = [nxService]::new()
+            $nxService.Name = $testService
+            $nxService.Enabled = $true
+            $nxService.State = "Running"
+            $result = $nxService.Get()
+            $result.Reasons.Count | Should -Be 1
+            $nxService.Test() | Should -Be $false
+        }
+
+        It "Should be noncompliant when expecting Enabled=True and State=Stopped" {
+            $nxService = [nxService]::new()
+            $nxService.Name = $testService
+            $nxService.Enabled = $true
+            $nxService.State = "Stopped"
+            $result = $nxService.Get()
+            $result.Reasons.Count | Should -Be 1
+            $nxService.Test() | Should -Be $false
+        }
+
+        It "Should be noncompliant when expecting Enabled=False and State=Running" {
+            $nxService = [nxService]::new()
+            $nxService.Name = $testService
+            $nxService.Enabled = $false
+            $nxService.State = "Running"
+            $result = $nxService.Get()
+            $result.Reasons.Count | Should -Be 1
+            $nxService.Test() | Should -Be $false
+        }
+
+        It "Should be compliant when expecting Enabled=False and State=Stopped" {
             $nxService = [nxService]::new()
             $nxService.Name = $testService
             $nxService.Enabled = $false
             $nxService.State = "Stopped"
-            $result = $nxService.Get()
-            $result.Reasons.Count | Should -Be 0
-            $nxService.Test() | Should -Be $true
-            $nxService.Enabled = $true
-            $nxService.State = "Running"
             $result = $nxService.Get()
             $result.Reasons.Count | Should -Be 0
             $nxService.Test() | Should -Be $true

@@ -34,14 +34,21 @@ class nxService
     [nxService] Get()
     {
         $nxService = Get-nxService -Name $this.Name
+        $currentState = [nxService]::new()
         if ([string]::IsNullOrEmpty($nxService.Name))
         {
-            # Silently return if the service does not exist
-            Write-Warning -Message ('Service ''{0}'' could not be found.' -f $this.Name)
-            return [nxService]::new()
+            if ($null -ne $this.Enabled -and -not $this.Enabled -and $null -ne $this.State -and $this.State -eq [nxServiceState]::Stopped)
+            {
+                return $currentState
+            }
+
+            $currentState.Reasons = [Reason]@{
+                Code = '{0}:{0}:NotRunning' -f 'nxService'
+                Phrase = 'Service ''{0}'' is not running.' -f $this.Name
+            }
+            return $currentState
         }
 
-        $currentState = [nxService]::new()
         $currentState.Name = $nxService.Name
         $currentState.Enabled = $nxService.Enabled
         $currentState.State = $nxService.State
