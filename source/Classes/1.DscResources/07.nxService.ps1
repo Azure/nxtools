@@ -43,8 +43,8 @@ class nxService
             }
 
             $currentState.Reasons = [Reason]@{
-                Code = '{0}:{0}:NotRunning' -f 'nxService'
-                Phrase = 'Service ''{0}'' is not running.' -f $this.Name
+                Code = '{0}:{0}:NotRunningDNE' -f 'nxService'
+                Phrase = 'Service ''{0}'' is not running or does not exist.' -f $this.Name
             }
             return $currentState
         }
@@ -71,11 +71,11 @@ class nxService
 
         Write-Debug -Message 'Adding reasons to the current state to explain discrepancies...'
 
-        $currentState.reasons = switch ($compareState.Property)
+        $currentState.Reasons = switch ($compareState.Property)
         {
             'Enabled'
             {
-                if ($null -ne $this.enabled -and $this.Enabled -ne $currentState.Enabled)
+                if ($null -ne $this.Enabled -and $this.Enabled -ne $currentState.Enabled)
                 {
                     $enabledReference = @{
                         $true = 'enabled'
@@ -91,7 +91,7 @@ class nxService
 
             'State'
             {
-                if ($null -ne $this.State -and $this.State -ne $currentState.State)
+                if ($null -ne $this.State -and $this.State -ine $currentState.State)
                 {
                     [Reason]@{
                         Code = '{0}:{0}:State' -f 'nxService'
