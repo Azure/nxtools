@@ -5,7 +5,7 @@ $script:testPackage = "myTestPackage" # Mock package for testing
 Describe "nxPackage resource for managing packages on a Linux node" {
     Context "When yum is used as the package manager" {
         BeforeAll {
-            Mock -ModuleName 'nxtools' -CommandName 'Get-Command' -ParameterFilter { $Name -eq "yum" } -MockWith {
+            Mock -ModuleName "nxtools" -CommandName "Get-Command" -ParameterFilter { $Name -eq "yum" } -MockWith {
                 @{
                     Name = "yum"
                 }
@@ -14,16 +14,16 @@ Describe "nxPackage resource for managing packages on a Linux node" {
 
         Context "When the package is not installed" {
             BeforeAll {
-                Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
-                    $expected = @('list', 'installed', $testPackage, '--quiet')
+                Mock -ModuleName "nxtools" -CommandName "Invoke-NativeCommand" -ParameterFilter {
+                    $expected = @("list", "installed", $testPackage, "--quiet")
                     $diff = Compare-Object $Parameters $expected
                     return $Executable -eq "yum" -and $diff.Count -eq 0
                 } -MockWith {
                     $exception = New-Object System.Exception("Error: No matching Packages to list")
                     return New-Object System.Management.Automation.ErrorRecord($exception, "errorId", "NotSpecified", $null)
                 }
-                Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
-                    $expected = @('install', '-q', '-y', $testPackage)
+                Mock -ModuleName "nxtools" -CommandName "Invoke-NativeCommand" -ParameterFilter {
+                    $expected = @("install", "-q", "-y", $testPackage)
                     $diff = Compare-Object $Parameters $expected
                     return $Executable -eq "yum" -and $diff.Count -eq 0
                 } -MockWith {
