@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed nxPackage crashing when yum is picked as the package manager.
+
+## [1.3.0] - 2023-10-12
+
+### Fixed
+
 - Fixed nxFile not able to delete files.
 - Fixed nxService crashing when auditing a service that does not exist.
 - Fixed nxUser failing if any users in /etc/passwd have uppercase letters in their username.

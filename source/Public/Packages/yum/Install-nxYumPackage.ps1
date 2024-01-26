@@ -14,7 +14,11 @@ function Install-nxYumPackage
         [ValidateNotNullOrEmpty()]
         [string]
         # Specifc Version of a package that you want to find in the Cached list of packages.
-        $Version
+        $Version,
+
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
+        [switch]
+        $Force
     )
 
     begin
@@ -25,7 +29,13 @@ function Install-nxYumPackage
     process
     {
         # Yum-get install
-        $yumGetInstallParams = @('install','-q','-y')
+        $yumGetInstallParams = @('install','-q')
+
+        if ($PSBoundParameters.ContainsKey('Force') -and $PSBoundParameters['Force'])
+        {
+            $yumGetInstallParams += @('-y')
+        }
+
         foreach ($packageName in $Name)
         {
             $packageToInstall = $packageName
