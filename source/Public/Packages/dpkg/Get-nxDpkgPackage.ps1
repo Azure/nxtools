@@ -44,19 +44,19 @@ function Get-nxDpkgPackage
                 AllowedPropertyName     = ([nxDpkgPackage].GetProperties().Name)
                 AddExtraPropertiesAsKey = 'AdditionalFields'
                 ErrorVariable           = 'packageError'
+                ErrorHandling           = { Write-Verbose $_ }
             }
 
             $properties = Invoke-NativeCommand -Executable 'dpkg' -Parameters $dpkgParams |
                 Get-PropertyHashFromListOutput @getPropertyHashFromListOutputParams
 
-            # Making sure we replicate the package property to Name property
-            # To correctly make the Base object (Package class)
-            #TODO: This should probably go in the nxDpkgPackage class constructors
-            $properties['PackageType'] = 'dpkg'
-            $properties.add('Name', $properties['Package'])
-
-            if (-not $packageError)
+            if (-not $packageError -and $null -ne $properties -and $properties.Count -ne 0)
             {
+                # Making sure we replicate the package property to Name property
+                # To correctly make the Base object (Package class)
+                #TODO: This should probably go in the nxDpkgPackage class constructors
+                $properties['PackageType'] = 'dpkg'
+                $properties.add('Name', $properties['Package'])
                 [nxDpkgPackage]$properties
             }
         }
