@@ -59,4 +59,42 @@ Describe "nxPackage resource for managing packages on a Linux node" {
             }
         }
     }
+
+    Context "When dpkg is used as the package manager" {
+        BeforeAll {
+            Mock -ModuleName "nxtools" -CommandName "Get-Command" -ParameterFilter { $Name -eq "dpkg" } -MockWith {
+                @{
+                    Name = "dpkg"
+                }
+            }
+        }
+
+        Context "When the package is not installed" {
+            BeforeAll {
+                Mock -ModuleName "nxtools" -CommandName "Invoke-NativeCommand" -ParameterFilter {
+                    $expected = @("-W", $testPackage)
+                    $diff = Compare-Object $Parameters $expected
+                    return $Executable -eq "dpkg-query" -and $diff.Count -eq 0
+                } -MockWith {
+                    "$testPackage`t"
+                }
+                Mock -ModuleName "nxtools" -CommandName "Invoke-NativeCommand" -ParameterFilter {
+                    $expected = @("--status", $testPackage)
+                    $diff = Compare-Object $Parameters $expected
+                    return $Executable -eq "dpkg" -and $diff.Count -eq 0
+                } -MockWith { $null }
+            }
+
+            It "Should be noncompliant with one Reason if we are expecting the package to be present" {
+                $nxPackage = [nxPackage]::new()
+                $nxPackage.Name = $testPackage
+                $nxPackage.Ensure = "Present"
+                $result = $nxPackage.Get()
+                $result.Reasons.Count | Should -Be 1
+                $result.Reasons[0].Code | Should -Be "nxPackage:nxPackage:Ensure"
+                $result.Reasons[0].Phrase | Should -Be "The nxPackage is not in desired state because the package was expected Present but was Absent."
+                $nxPackage.Test() | Should -Be $false
+            }
+        }
+    }
 }
