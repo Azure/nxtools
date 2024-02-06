@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed nxPackage crashing when yum is picked as the package manager.
 - Fixed nxPackage crashing when dpkg is picked as the package manager and the package is not installed.
-- Fixed nxPackage not handling packages with status deinstall.
 
 ## [1.3.0] - 2023-10-12
 
