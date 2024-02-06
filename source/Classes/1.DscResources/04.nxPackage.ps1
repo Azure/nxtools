@@ -39,7 +39,6 @@ class nxPackage
             $packageFound = $packageFound[0]
         }
 
-        # TODO: Temporary fix, clean up packages with status deinstall
         if ($packageFound -and $packageFound.Status -and $packageFound.Status.Contains("deinstall"))
         {
             $currentState.Ensure = [Ensure]::Absent
