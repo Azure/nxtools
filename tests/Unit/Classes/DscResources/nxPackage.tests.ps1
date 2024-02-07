@@ -96,5 +96,43 @@ Describe "nxPackage resource for managing packages on a Linux node" {
                 $nxPackage.Test() | Should -Be $false
             }
         }
+
+        Context "When the package has status deinstall" {
+            BeforeAll {
+                Mock -ModuleName "nxtools" -CommandName "Invoke-NativeCommand" -ParameterFilter {
+                    $expected = @("-W", $testPackage)
+                    $diff = Compare-Object $Parameters $expected
+                    return $Executable -eq "dpkg-query" -and $diff.Count -eq 0
+                } -MockWith {
+                    "$testPackage`t"
+                }
+                Mock -ModuleName "nxtools" -CommandName "Get-nxPackage" -MockWith {
+                    return @{
+                        Package = $testPackage
+                        Status = "deinstall ok config-files"
+                    }
+                }
+            }
+
+            It "Should be noncompliant with one Reason if we are expecting the package to be present" {
+                $nxPackage = [nxPackage]::new()
+                $nxPackage.Name = $testPackage
+                $nxPackage.Ensure = "Present"
+                $result = $nxPackage.Get()
+                $result.Reasons.Count | Should -Be 1
+                $result.Reasons[0].Code | Should -Be "nxPackage:nxPackage:Ensure"
+                $result.Reasons[0].Phrase | Should -Be "The nxPackage is not in desired state because the package was expected Present but was Absent."
+                $nxPackage.Test() | Should -Be $false
+            }
+
+            It "Should be compliant if we are expecting the package to be absent" {
+                $nxPackage = [nxPackage]::new()
+                $nxPackage.Name = $testPackage
+                $nxPackage.Ensure = "Absent"
+                $result = $nxPackage.Get()
+                $result.Reasons.Count | Should -Be 0
+                $nxPackage.Test() | Should -Be $true
+            }
+        }
     }
 }
