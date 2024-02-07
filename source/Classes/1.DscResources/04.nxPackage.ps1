@@ -39,6 +39,11 @@ class nxPackage
             $packageFound = $packageFound[0]
         }
 
+        if ($packageFound -and $packageFound.Status -and $packageFound.Status.Contains("deinstall"))
+        {
+            $currentState.Ensure = [Ensure]::Absent
+        }
+
         $currentState.Name = $this.Name
         $currentState.PackageType = $packageFound.PackageType
         $currentState.Version = $packageFound.Version
