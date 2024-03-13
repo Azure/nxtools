@@ -9,6 +9,7 @@ class nxFileSystemInfo : System.IO.FileSystemInfo
     [long] $Length
 
     [string] $Name
+    [bool] $Exists
     [datetime] $LastWriteTime
 
     nxFileSystemInfo ([System.Collections.IDictionary]$properties)
