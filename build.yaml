@@ -157,9 +157,6 @@ GitHubConfig:
     - output/GCPackages/LinuxGroupsMustInclude*.zip
     - output/GCPackages/No90CloudInitUserAllowdNoPasswdInSudoers*.zip
     - output/GCPackages/NotInstalledApplicationLinux*.zip
-    - output/GCPackages/PasswordPolicy_msid110*.zip
-    - output/GCPackages/PasswordPolicy_msid121*.zip
-    - output/GCPackages/PasswordPolicy_msid232*.zip
   # GitHubConfigUserName: NA
   # GitHubConfigUserEmail: NA@microsoft.com
   UpdateChangelogOnPrerelease: false

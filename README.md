@@ -132,9 +132,6 @@ Here are the public commands available.
 - `LinuxGroupsMustExclude`  [`AuditAndSet`]: List of users that must be excluded from a group.
 - `LinuxGroupsMustInclude` [`AuditAndSet`]: List of users that must be included in a group.
 - `NotInstalledApplicationLinux` [`Audit`]: Ensure the list of packages is not installed (dpkg only)
-- `PasswordPolicy_msid110` [`Audit`]: Remote connections from accounts with empty passwords should be disabled.
-- `PasswordPolicy_msid121` [`Audit`]: file `/etc/passwd` permissions should be 0644
-- `PasswordPolicy_msid232` [`Audit`]: Ensure there are no accounts without passwords.
 
 ## Example
 
