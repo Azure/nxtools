@@ -14,7 +14,7 @@ function Get-nxSystemdService
         throw 'systemctl not found'
     }
 
-    $systemctlParams = @('--type=service', '--no-legend', '--all', '--no-pager')
+    $systemctlParams = @('--type=service', '--no-legend', '--all', '--no-pager', '--plain')
     if ($PSBoundParameters.ContainsKey('Name'))
     {
         # Because systemctl version 219 and below do not support short name (i.e. centos 7.5)
