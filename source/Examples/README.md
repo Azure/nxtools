@@ -10,9 +10,6 @@ The GC Resources are DSC Resources that only supports String, Int, bool as prope
 To emulate arrays of strings or int, the GC Resource author should use a value separator, such as `;`.
 
 - [GC_LinuxGroup](../GCPackages/LinuxGroupsMustExclude)
-- [GC_msid110](../GCPackages/PasswordPolicy_msid110)
-- [GC_msid121](../GCPackages/PasswordPolicy_msid121)
-- [GC_msid232](../GCPackages/PasswordPolicy_msid232)
 - [GC_InstalledApplicationLinux](../GCPackages/InstalledApplicationLinux)
 - [GC_NotInstalledApplicationLinux](../GCPackages/NotInstalledApplicationLinux)
 

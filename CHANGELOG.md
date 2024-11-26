@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- configuration examples for password policies
+
 ### Fixed
 
 - Fixed nxPackage crashing when yum is picked as the package manager.
