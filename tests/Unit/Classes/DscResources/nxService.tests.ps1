@@ -17,7 +17,7 @@ Describe "nxService resource for managing services on a Linux node" {
     Context "When the service is running" {
         BeforeAll {
             Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
-                $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', $testService)
+                $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', '--plain', $testService)
                 $diff = Compare-Object $Parameters $expected
                 return $Executable -eq "systemctl" -and $diff.Count -eq 0
             } -MockWith { "$testService loaded active running Regular background program processing daemon" }
@@ -64,7 +64,7 @@ Describe "nxService resource for managing services on a Linux node" {
     Context "When the service is stopped" {
         BeforeAll {
             Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
-                $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', $testService)
+                $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', '--plain', $testService)
                 $diff = Compare-Object $Parameters $expected
                 return $Executable -eq "systemctl" -and $diff.Count -eq 0
             } -MockWith { "$testService loaded inactive dead Regular background program processing daemon" }
@@ -102,7 +102,7 @@ Describe "nxService resource for managing services on a Linux node" {
             } -MockWith { "disabled" }
 
             Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
-                $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', $testService)
+                $expected = @('list-units', '--type=service', '--no-legend', '--all', '--no-pager', '--plain', $testService)
                 $diff = Compare-Object $Parameters $expected
                 return $Executable -eq "systemctl" -and $diff.Count -eq 0
             } -MockWith { "" }

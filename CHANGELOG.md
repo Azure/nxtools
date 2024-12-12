@@ -5,9 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed module not working in PowerShell v7.4.x due to nxFileSystemInfo not implementing the abstract property Exists from the base type FileSystemInfo.
+- Fixed nxService reporting wrong status on Ubuntu Server 22.04 LTS due to incorrect parsing.
+
 ### Removed
 
 - configuration examples for password policies
+
+## [1.4.0] - 2024-02-08
 
 ### Fixed
 
