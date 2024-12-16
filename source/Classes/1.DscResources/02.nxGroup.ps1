@@ -21,6 +21,9 @@ class nxGroup
     [DscProperty()]
     [System.String] $PreferredGroupID
 
+    [DscProperty()]
+    [bool] $Force
+
     [DscProperty(NotConfigurable)]
     [Reason[]] $Reasons
 
@@ -53,6 +56,12 @@ class nxGroup
             }
 
             $currentState.PreferredGroupID = $nxLocalGroup.GroupID
+
+            if ($this.Force -and ($null -eq $this.Members))
+            {
+                # Force group members to be checked
+                $this.Members = @()
+            }
 
             $valuesToCheck = @(
                 # GroupName can be skipped because it's determined with Ensure absent/present
@@ -218,8 +227,17 @@ class nxGroup
 
                     ':Members$'
                     {
-                        Write-Verbose -Message "Attempting to set the Members for group '$($nxLocalGroup.GroupName)' to '$($this.Members -join "', '")'."
-                        Set-nxLocalGroup -GroupName $nxLocalGroup.GroupName -Member $this.Members -Confirm:$false
+                        if (-not $this.Members)
+                        {
+                            $usersToRemoveFromGroup = $nxLocalGroup.GroupMember
+                            Write-Verbose -Message "Attempting to remove Members from group '$($nxLocalGroup.GroupName)' ('$($usersToRemoveFromGroup -join "', '")')."
+                            $usersToRemoveFromGroup | Remove-nxLocalGroupMember -GroupName $this.GroupName -Confirm:$false
+                        }
+                        else
+                        {
+                            Write-Verbose -Message "Attempting to set the Members for group '$($nxLocalGroup.GroupName)' to '$($this.Members -join "', '")'."
+                            Set-nxLocalGroup -GroupName $nxLocalGroup.GroupName -Member $this.Members -Confirm:$false
+                        }
                     }
 
                     ':MembersToInclude$'
