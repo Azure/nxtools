@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed module not working in PowerShell v7.4.x due to nxFileSystemInfo not implementing the abstract property Exists from the base type FileSystemInfo.
 - Fixed nxService reporting wrong status on Ubuntu Server 22.04 LTS due to incorrect parsing.
+- Fixed nxGroup not removing group members when specifying that the group should be empty.
 
 ### Removed
 
