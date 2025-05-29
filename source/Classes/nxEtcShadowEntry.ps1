@@ -15,12 +15,12 @@ class nxEtcShadowEntry
     hidden [string] $ShadowEntry
     [string] $Username
     [string] $EncryptedPassword # as in the Shadow file
-    [datetime] $PasswordLastChanged
-    [int] $MinimumPasswordAgeInDays
-    [int] $MaximumPasswordAgeInDays
-    [int] $PasswordAgeWarningPeriodInDays
-    [int] $PasswordInactivityPeriodInDays
-    [System.Nullable[datetime]] $AccountExipreOn
+    [Nullable[datetime]] $PasswordLastChanged
+    [Nullable[int]] $MinimumPasswordAgeInDays
+    [Nullable[int]] $MaximumPasswordAgeInDays
+    [Nullable[int]] $PasswordAgeWarningPeriodInDays
+    [Nullable[int]] $PasswordInactivityPeriodInDays
+    [Nullable[datetime]] $AccountExipreOn
     [string] $ReservedField
 
     nxEtcShadowEntry()
@@ -39,16 +39,12 @@ class nxEtcShadowEntry
         $this.ShadowEntry = $EtcShadowEntry
         $this.Username = $Matches.username
         $this.EncryptedPassword = $Matches.password
-        $this.PasswordLastChanged = ([datetime]'1/1/1970').AddDays($Matches.lastchanged)
-        $this.MinimumPasswordAgeInDays = $Matches.min
-        $this.MaximumPasswordAgeInDays = $Matches.max
-        $this.PasswordAgeWarningPeriodInDays = $Matches.warn
-        $this.PasswordInactivityPeriodInDays = $Matches.inactive
-        if ($Matches.expire)
-        {
-            $this.AccountExipreOn = ([datetime]'1/1/1970').AddDays($Matches.expire)
-        }
-
+        $this.PasswordLastChanged = $this.ParseDateTime($Matches.lastchanged)
+        $this.MinimumPasswordAgeInDays = $this.ParseInt($Matches.min)
+        $this.MaximumPasswordAgeInDays = $this.ParseInt($Matches.max)
+        $this.PasswordAgeWarningPeriodInDays = $this.ParseInt($Matches.warn)
+        $this.PasswordInactivityPeriodInDays = $this.ParseInt($Matches.inactive)
+        $this.AccountExipreOn = $this.ParseDateTime($Matches.expire)
         $this.ReservedField = $Matches.other
 
         $this | Add-Member -MemberType ScriptProperty -Name 'PasswordLocked' -Value {
@@ -71,5 +67,27 @@ class nxEtcShadowEntry
         {
             return $false
         }
+    }
+
+    [Nullable[int]] ParseInt([string] $value)
+    {
+        if ([string]::IsNullOrEmpty($value))
+        {
+            return $null
+        }
+
+        # Throws if the value is not a valid integer
+        return [int]::Parse($value)
+    }
+
+    [Nullable[datetime]] ParseDateTime([string] $value)
+    {
+        if ([string]::IsNullOrEmpty($value))
+        {
+            return $null
+        }
+
+        # Throws if the value is not a valid integer
+        return ([datetime]'1/1/1970').AddDays([int]::Parse($value))
     }
 }
