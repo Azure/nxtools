@@ -93,11 +93,11 @@ Describe "nxUser resource for managing local users on a Linux node" {
                 # The '!' character is not allowed in fields where a number is expected
                 return @(
                     "testuser1:abc123:!:0:99999:7:::",
-                    "testuser2:!:19613:!:99999:7:::",
-                    "testuser3:!:19613:0:!:7:::",
-                    "testuser4:!:19613:0:99999:!:::",
-                    "testuser5:!:19613:0:99999:7:!::",
-                    "testuser6:!:19613:0:99999:7::!:"
+                    "testuser2:abc123:19613:!:99999:7:::",
+                    "testuser3:abc123:19613:0:!:7:::",
+                    "testuser4:abc123:19613:0:99999:!:::",
+                    "testuser5:abc123:19613:0:99999:7:!::",
+                    "testuser6:abc123:19613:0:99999:7::!:"
                 )
             }
 
