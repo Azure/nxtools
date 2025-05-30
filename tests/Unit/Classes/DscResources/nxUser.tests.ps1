@@ -72,5 +72,73 @@ Describe "nxUser resource for managing local users on a Linux node" {
             $result = $nxUser.Get()
             $result.Reasons.Count | Should -Be 0
         }
+
+        It ("Should handle some invalid values in /etc/shadow") {
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/passwd'
+            } -MockWith {
+                return @(
+                    "testuser1:x:1000:1000::/home/testuser:/bin/bash",
+                    "testuser2:x:1000:1000::/home/testuser:/bin/bash",
+                    "testuser3:x:1000:1000::/home/testuser:/bin/bash",
+                    "testuser4:x:1000:1000::/home/testuser:/bin/bash",
+                    "testuser5:x:1000:1000::/home/testuser:/bin/bash",
+                    "testuser6:x:1000:1000::/home/testuser:/bin/bash"
+                )
+            }
+
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/shadow'
+            } -MockWith {
+                # The '!' character is not allowed in fields where a number is expected
+                return @(
+                    "testuser1:abc123:!:0:99999:7:::",
+                    "testuser2:abc123:19613:!:99999:7:::",
+                    "testuser3:abc123:19613:0:!:7:::",
+                    "testuser4:abc123:19613:0:99999:!:::",
+                    "testuser5:abc123:19613:0:99999:7:!::",
+                    "testuser6:abc123:19613:0:99999:7::!:"
+                )
+            }
+
+            $nxUser = [nxUser]::new()
+            $nxUser.Ensure = "Present"
+            $nxUser.UserName = "testuser1"
+            { $nxUser.Get() } | Should -Throw
+            $nxUser.UserName = "testuser2"
+            { $nxUser.Get() } | Should -Throw
+            $nxUser.UserName = "testuser3"
+            { $nxUser.Get() } | Should -Throw
+            $nxUser.UserName = "testuser4"
+            { $nxUser.Get() } | Should -Throw
+            $nxUser.UserName = "testuser5"
+            { $nxUser.Get() } | Should -Throw
+            $nxUser.UserName = "testuser6"
+            { $nxUser.Get() } | Should -Throw
+        }
+
+        It ("Should handle some empty values in /etc/shadow") {
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/passwd'
+            } -MockWith {
+                return @(
+                    "testuser:x:1000:1000::/home/testuser:/bin/bash"
+                )
+            }
+
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/shadow'
+            } -MockWith {
+                return @(
+                    "testuser:abc123:::::::"
+                )
+            }
+
+            $nxUser = [nxUser]::new()
+            $nxUser.Ensure = "Present"
+            $nxUser.UserName = "testuser"
+            $result = $nxUser.Get()
+            $result.Reasons.Count | Should -Be 0
+        }
     }
 }
