@@ -35,4 +35,29 @@ Describe "nxFile resource for managing a file or a folder" {
             Should -InvokeVerifiable
         }
     }
+
+    Context "When the file already exists but has empty permissions for the other category" {
+        BeforeAll {
+            Mock -ModuleName 'nxtools' -CommandName 'Invoke-NativeCommand' -ParameterFilter {
+                $mockPathFound = $false
+                foreach ($param in $Parameters)
+                {
+                    if ($param -match $mockPath -or $param -match $mockPath.Replace('/', '\\'))
+                    {
+                        $mockPathFound = $true
+                    }
+                }
+                return $Executable -eq "ls" -and $mockPathFound
+            } -MockWith { "-rw-r----- 1 root root 0 2023-09-11 17:05:28.084507110 +0000 $mockPath" }
+        }
+
+        It "Should be compliant if we are only expecting the file to exist" {
+            $nxFile = [nxFile]::new()
+            $nxFile.Ensure = "Present"
+            $nxFile.DestinationPath = $mockPath
+            $nxFile.Type = "File"
+            $result = $nxFile.Get()
+            $result.Reasons.Count | Should -Be 0
+        }
+    }
 }

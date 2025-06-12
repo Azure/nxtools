@@ -5,7 +5,7 @@ function Convert-nxFileSystemAccessRightToSymbol
     (
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [System.String[]]
-        [ValidateScript({$_ -as [nxFileSystemAccessRight] -or $_ -as [nxFileSystemSpecialMode]})]
+        [ValidateScript({$null -ne ($_ -as [nxFileSystemAccessRight]) -or $null -ne ($_ -as [nxFileSystemSpecialMode])})]
         $AccessRight,
 
         [Parameter(ValueFromPipelineByPropertyName = $true)]
@@ -26,11 +26,11 @@ function Convert-nxFileSystemAccessRightToSymbol
         [nxFileSystemSpecialMode]$SpecialModeEntry = 'none'
 
         $AccessRight.ForEach({
-            if ($_ -as [nxFileSystemAccessRight])
+            if ($null -ne ($_ -as [nxFileSystemAccessRight]))
             {
                 $AccessRightEntry = $AccessRightEntry -bor [nxFileSystemAccessRight]$_
             }
-            elseif ($_ -as [nxFileSystemSpecialMode])
+            elseif ($null -ne ($_ -as [nxFileSystemSpecialMode]))
             {
                 $SpecialModeEntry = $SpecialModeEntry -bor [nxFileSystemSpecialMode]$_
             }

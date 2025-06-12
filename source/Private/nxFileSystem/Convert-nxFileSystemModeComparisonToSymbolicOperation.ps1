@@ -11,7 +11,7 @@ function Convert-nxFileSystemModeComparisonToSymbolicOperation
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [System.String]
-        [ValidateScript({$_ -as [nxFileSystemAccessRight] -or $_ -as [nxFileSystemSpecialMode]})]
+        [ValidateScript({$null -ne ($_ -as [nxFileSystemAccessRight]) -or $null -ne ($_ -as [nxFileSystemSpecialMode])})]
         [Alias('InputObject')]
         $EnumValue,
 
