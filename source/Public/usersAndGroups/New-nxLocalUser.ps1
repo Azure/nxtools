@@ -178,7 +178,7 @@ function New-nxLocalUser
 
         if ($PSBoundParameters.ContainsKey('EncryptedPassword') -and $PSBoundParameters['EncryptedPassword'])
         {
-            $userAddParams += @('-p', $EncryptedPassword)
+            $userAddParams += @('-p', ($EncryptedPassword | Get-nxEscapedString))
         }
 
         if ($PSBoundParameters.ContainsKey('ShellCommand') -and $PSBoundParameters['ShellCommand'])

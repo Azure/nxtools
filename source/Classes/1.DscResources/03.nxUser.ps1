@@ -99,7 +99,7 @@ class nxUser
                 {
                     [Reason]@{
                         Code = '{0}:{0}:FullName' -f $this.GetType()
-                        Phrase = $script:localizedDataNxUser.FullNameMismatch -f $this.FullName, $currentState.FullName
+                        Phrase = $script:localizedDataNxUser.FullNameMismatch -f $this.UserName, $currentState.FullName
                     }
                 }
 
@@ -107,7 +107,7 @@ class nxUser
                 {
                     [Reason]@{
                         Code = '{0}:{0}:Description' -f $this.GetType()
-                        Phrase = $script:localizedDataNxUser.DescriptionMismatch -f $this.Description, $currentState.Description
+                        Phrase = $script:localizedDataNxUser.DescriptionMismatch -f $this.UserName, $currentState.Description
                     }
                 }
 
@@ -115,7 +115,7 @@ class nxUser
                 {
                     [Reason]@{
                         Code = '{0}:{0}:Password' -f $this.GetType()
-                        Phrase = $script:localizedDataNxUser.PasswordMismatch -f $this.Password, $currentState.Password
+                        Phrase = $script:localizedDataNxUser.PasswordMismatch -f $this.UserName, $currentState.Password
                     }
                 }
 
@@ -123,7 +123,7 @@ class nxUser
                 {
                     [Reason]@{
                         Code = '{0}:{0}:Disabled' -f $this.GetType()
-                        Phrase = $script:localizedDataNxUser.DisabledMismatch -f $this.Disabled, $currentState.Disabled
+                        Phrase = $script:localizedDataNxUser.DisabledMismatch -f $this.UserName, $currentState.Disabled
                     }
                 }
 
@@ -131,7 +131,7 @@ class nxUser
                 {
                     [Reason]@{
                         Code = '{0}:{0}:PasswordChangeRequired' -f $this.GetType()
-                        Phrase = $script:localizedDataNxUser.PasswordChangeRequiredMismatch -f $this.PasswordChangeRequired, $currentState.PasswordChangeRequired
+                        Phrase = $script:localizedDataNxUser.PasswordChangeRequiredMismatch -f $this.UserName, $this.PasswordChangeRequired, $currentState.PasswordChangeRequired
                     }
                 }
 
@@ -139,7 +139,7 @@ class nxUser
                 {
                     [Reason]@{
                         Code = '{0}:{0}:HomeDirectory' -f $this.GetType()
-                        Phrase = $script:localizedDataNxUser.HomeDirectoryMismatch -f $this.HomeDirectory, $currentState.HomeDirectory
+                        Phrase = $script:localizedDataNxUser.HomeDirectoryMismatch -f $this.UserName, $this.HomeDirectory, $currentState.HomeDirectory
                     }
                 }
 
@@ -147,7 +147,7 @@ class nxUser
                 {
                     [Reason]@{
                         Code = '{0}:{0}:GroupID' -f $this.GetType()
-                        Phrase = $script:localizedDataNxUser.GroupIDMismatch -f $this.GroupID, $currentState.GroupID
+                        Phrase = $script:localizedDataNxUser.GroupIDMismatch -f $this.UserName, $this.GroupID, $currentState.GroupID
                     }
                 }
             }
@@ -238,7 +238,9 @@ class nxUser
 
                 # Get user so we can set other properties
                 $localUser = Get-nxLocalUser -UserName $this.UserName -ErrorAction Stop
-                $setUserParams = @{}
+                $setUserParams = @{
+                    UserName = $this.UserName
+                }
 
                 switch -Regex ($currentState.Reasons.Code)
                 {

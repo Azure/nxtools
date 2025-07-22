@@ -140,5 +140,90 @@ Describe "nxUser resource for managing local users on a Linux node" {
             $result = $nxUser.Get()
             $result.Reasons.Count | Should -Be 0
         }
+
+        It ("Should be able to set the password") {
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/passwd'
+            } -MockWith {
+                return @(
+                    "testuser:x:1000:1000::/home/testuser:/bin/bash"
+                )
+            }
+
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/shadow'
+            } -MockWith {
+                return @(
+                    "testuser:password:::::::"
+                )
+            }
+
+            $nxUser = [nxUser]::new()
+            $nxUser.Ensure = "Present"
+            $nxUser.UserName = "testuser"
+            $nxUser.Password = "newPassword"
+            $result = $nxUser.Get()
+            $result.Reasons.Count | Should -Be 1
+            $result.Reasons[0].Code | Should -Be "nxUser:nxUser:Password"
+            $result.Reasons[0].Phrase | Should -Be "The nxLocalUser with UserName 'testuser' has an unexpected Password."
+            $nxUser.Test() | Should -Be $false
+
+            Mock -ModuleName "nxtools" -CommandName "Invoke-NativeCommand" -ParameterFilter {
+                return $Executable -eq "usermod"
+            }
+
+            $nxUser.Set()
+            
+            Should -Invoke -CommandName "Invoke-NativeCommand" -ModuleName "nxtools" -ParameterFilter {
+                return $Executable -eq "usermod" -and 
+                       $Parameters.Count -eq 3 -and 
+                       $Parameters[0] -eq "-p" -and 
+                       $Parameters[1] -eq "'newPassword'" -and 
+                       $Parameters[2] -eq "testuser"
+            } -Times 1 -Exactly
+        }
+    }
+
+    Context "When the user does not exist" {
+        BeforeAll {
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/passwd'
+            } -MockWith {
+                return @()
+            }
+            
+            Mock -ModuleName 'nxtools' -CommandName 'Get-Content' -ParameterFilter {
+                return $Path -eq '/etc/shadow'
+            } -MockWith {
+                return @()
+            }
+        }
+
+        It ("Should be able to create a user where the encrypted password contains dollar signs") {
+            $nxUser = [nxUser]::new()
+            $nxUser.Ensure = "Present"
+            $nxUser.UserName = "testuser"
+            $nxUser.Password = "pa`$`$word"
+            $result = $nxUser.Get()
+            $result.Reasons.Count | Should -Be 1
+            $result.Reasons[0].Code | Should -Be "nxUser:nxUser:Ensure"
+            $result.Reasons[0].Phrase | Should -Be "The nxLocalUser with UserName 'testuser' was not found but is expected to be present."
+            $nxUser.Test() | Should -Be $false
+
+            Mock -ModuleName "nxtools" -CommandName "Invoke-NativeCommand" -ParameterFilter {
+                return $Executable -eq "useradd"
+            }
+
+            $nxUser.Set()
+
+            Should -Invoke -CommandName "Invoke-NativeCommand" -ModuleName "nxtools" -ParameterFilter {
+                return $Executable -eq "useradd" -and 
+                       $Parameters.Count -eq 4 -and 
+                       $Parameters[0] -eq "-p" -and 
+                       $Parameters[1] -eq "'pa`$`$word'" -and 
+                       $Parameters[2] -eq "-U" -and
+                       $Parameters[3] -eq "testuser"
+            } -Times 1 -Exactly
+        }
     }
 }
