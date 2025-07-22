@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Improved /etc/shadow file parsing for the nxUser resource.
+- For the nxUser resource, improved /etc/shadow file parsing.
 - Fixed a validation error related to an 'AccessRight' parameter when a file has empty permissions for one or more categories.
+- For the nxUser resource, fixed set not working when the user already exists.
+- For the nxUser resource, fixed set creating a user with the wrong encrypted password.
 
 ## [1.5.0] - 2025-01-28
 
