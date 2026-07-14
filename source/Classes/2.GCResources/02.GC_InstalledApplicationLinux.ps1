@@ -84,7 +84,14 @@ class GC_InstalledApplicationLinux
         # split what's in [] with ; separator
         # update $this.PackageShouldBeInstalled
         $stringList = $this.AttributesYmlContent -replace '^packages:\s*\[|^\[|\]$'
-        $this.PackageShouldBeInstalled = $stringList -split '\s*;\s*'
+        $packageNames = $stringList -split '\s*;\s*'
+
+        # The attribute content is externally supplied; validate it before it is
+        # used so a crafted package name cannot be interpreted as anything other
+        # than a package identifier downstream.
+        Assert-nxValidPackageName -Name $packageNames
+
+        $this.PackageShouldBeInstalled = $packageNames
     }
 
     [void] ConvertStringArrayToAttributeYmlContent()

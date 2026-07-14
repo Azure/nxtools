@@ -15,7 +15,12 @@ function Get-nxDpkgPackageInstalled
         # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-source
         $Name = $Name.ForEach({$_.ToLower()})
 
-        Invoke-NativeCommand -Executable 'dpkg-query' -Parameters @('-W',($Name -join ' ')) |
+        # Treat package names strictly as data: reject anything that is not a valid
+        # package name and pass each name as its own argument (never a single joined
+        # string) so a name can never be interpreted as a command or argument switch.
+        Assert-nxValidPackageName -Name $Name
+
+        Invoke-NativeCommand -Executable 'dpkg-query' -Parameters (@('-W') + $Name) |
             ForEach-Object -Process {
                 if ($_ -is [System.Management.Automation.ErrorRecord])
                 {
