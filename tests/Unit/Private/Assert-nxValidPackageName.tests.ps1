@@ -37,6 +37,8 @@ Describe "Assert-nxValidPackageName" {
             'openssl | touch /tmp/x'
             "openssl`ntouch /tmp/x"
             'openssl `touch /tmp/x`'
+            "openssl'; touch /tmp/x #"
+            'openssl" ; touch /tmp/x'
             '-W'
             '../../etc/passwd'
             'open ssl'
